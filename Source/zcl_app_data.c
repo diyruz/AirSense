@@ -87,14 +87,10 @@ CONST zclAttrRec_t zclApp_AttrsFirstEP[] = {
     {BASIC, {ATTRID_BASIC_SW_BUILD_ID, ZCL_UINT8, R, (void *)&zclApp_ApplicationVersion}},
 
     {TEMP, {ATTRID_MS_TEMPERATURE_MEASURED_VALUE, ZCL_INT16, RR, (void *)&zclApp_Sensors.Temperature}},
-    {CO2_LEVEL, {ATTRID_CO2_LEVEL_MEASURED_VALUE, ZCL_SINGLE, RR, (void *)&zclApp_Sensors.CO2_PPM}},
-    {CO2_LEVEL, {ATTRID_CO2_TOLERANCE, ZCL_SINGLE, RW, (void *)&zclApp_Config.SensorTolerance}},
-
-    {CO2_LEVEL, {ATTRID_DISABLE_ABC, ZCL_DATATYPE_BOOLEAN, RW, (void *)&zclApp_Config.DisableABC}},
-    {CO2_LEVEL, {ATTRID_LED_FEEDBACK, ZCL_DATATYPE_BOOLEAN, RW, (void *)&zclApp_Config.LedFeedback}},
-
-    // {ILLUMINANCE_CONFIG, {ATTRID_RADIATION_LED_FEEDBACK, ZCL_DATATYPE_BOOLEAN, RW, (void *)&zclApp_Config.LedFeedback}}
-
+    {TEMP, {ATTRID_MS_TEMPERATURE_MEASUREMENT_CO2_LEVEL_MEASURED_VALUE, ZCL_UINT16, RR, (void *)&zclApp_Sensors.CO2_PPM}},
+    {TEMP, {ATTRID_CO2_TOLERANCE, ZCL_UINT8, RW, (void *)&zclApp_Config.SensorTolerance}},
+    {TEMP, {ATTRID_DISABLE_ABC, ZCL_DATATYPE_BOOLEAN, RW, (void *)&zclApp_Config.DisableABC}},
+    {TEMP, {ATTRID_LED_FEEDBACK, ZCL_DATATYPE_BOOLEAN, RW, (void *)&zclApp_Config.LedFeedback}}
 };
 
 uint8 CONST zclApp_AttrsCount = (sizeof(zclApp_AttrsFirstEP) / sizeof(zclApp_AttrsFirstEP[0]));
@@ -103,7 +99,7 @@ const cId_t zclApp_InClusterList[] = {ZCL_CLUSTER_ID_GEN_BASIC};
 
 #define APP_MAX_INCLUSTERS (sizeof(zclApp_InClusterList) / sizeof(zclApp_InClusterList[0]))
 
-const cId_t zclApp_OutClusterList[] = {CO2_LEVEL};
+const cId_t zclApp_OutClusterList[] = {TEMP};
 
 #define APP_MAX_OUT_CLUSTERS (sizeof(zclApp_OutClusterList) / sizeof(zclApp_OutClusterList[0]))
 

@@ -46,12 +46,16 @@
 
 #if defined(HAL_BOARD_TARGET)
     #define HAL_KEY_P2_INPUT_PINS BV(0)
-
     #define APP_TX_POWER TX_PWR_PLUS_19
+    #define SENSEAIR_UART_PORT 0x00
+    #define HAL_UART_DMA 1
+    #define HAL_UART_ISR 0
+    #define INT_HEAP_LEN (2685-0x26-0xCC)
 #elif defined(HAL_BOARD_CHDTECH_DEV)
     #define HAL_KEY_P0_INPUT_PINS BV(1)
     #define APP_TX_POWER TX_PWR_PLUS_4
     #define DO_DEBUG_UART
+    #define HAL_UART_ISR 2
 #endif
 
 #define FACTORY_RESET_HOLD_TIME_LONG 3000
@@ -66,7 +70,7 @@
 // #define INT_HEAP_LEN (2685 - 0x4B - 0xBB-0x50-0xae)
 // #define HAL_UART TRUE
 // #define HAL_UART_DMA 2
-#define HAL_UART_ISR 2
+#define HAL_UART TRUE
 
 
 #define TSENS_SBIT P0_0

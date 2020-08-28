@@ -37,17 +37,16 @@ extern "C" {
 #define TEMP            ZCL_CLUSTER_ID_MS_TEMPERATURE_MEASUREMENT
 
 //Carbon Dioxide (CO2)
-#define CO2_LEVEL                           0x040d
-#define ATTRID_CO2_LEVEL_MEASURED_VALUE     0x0000
-#define ATTRID_CO2_TOLERANCE                0x0003
-#define ATTRID_DISABLE_ABC                  0x0200
-#define ATTRID_LED_FEEDBACK                 0x0201
+#define ATTRID_MS_TEMPERATURE_MEASUREMENT_CO2_LEVEL_MEASURED_VALUE      0x0200
+#define ATTRID_CO2_TOLERANCE                                            0x0201
+#define ATTRID_DISABLE_ABC                                              0x0202
+#define ATTRID_LED_FEEDBACK                                             0x0203
 
 
 
 #define ZCL_UINT8   ZCL_DATATYPE_UINT8
 #define ZCL_UINT16  ZCL_DATATYPE_UINT16
-#define ZCL_INT16  ZCL_DATATYPE_INT16
+#define ZCL_INT16   ZCL_DATATYPE_INT16
 #define ZCL_UINT32  ZCL_DATATYPE_UINT32
 #define ZCL_SINGLE  ZCL_DATATYPE_SINGLE_PREC
 /*********************************************************************

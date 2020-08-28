@@ -247,7 +247,7 @@ extern void MAC_RfFrontendSetup(void);
   HAL_BOARD_RF_FRONTEND_SETUP();                                 \
   LED1_DDR |= LED1_BV;                                           \
   LED2_DDR |= LED2_BV;                                           \
-  LED2_DDR |= LED3_BV;
+  LED3_DDR |= LED3_BV;                                           \
 }
 #endif
 

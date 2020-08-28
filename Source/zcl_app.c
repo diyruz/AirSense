@@ -26,9 +26,8 @@
 
 #include "onboard.h"
 
-#include "factory_reset.h"
 #include "commissioning.h"
-
+#include "factory_reset.h"
 /* HAL */
 #include "ds18b20.h"
 #include "hal_drivers.h"
@@ -36,7 +35,6 @@
 #include "hal_led.h"
 #include "senseair.h"
 #include "version.h"
-
 
 /*********************************************************************
  * MACROS
@@ -112,12 +110,11 @@ void zclApp_Init(byte task_id) {
     zcl_registerForMsg(zclApp_TaskID);
     RegisterForKeys(zclApp_TaskID);
 
-
     ZMacSetTransmitPower(APP_TX_POWER);
 
     LREP("Build %s \r\n", zclApp_DateCodeNT);
 
-    osal_start_reload_timer(zclApp_TaskID, APP_REPORT_EVT, 1000); // APP_REPORT_DELAY);
+    osal_start_reload_timer(zclApp_TaskID, APP_REPORT_EVT, APP_REPORT_DELAY); // APP_REPORT_DELAY);
 }
 static void zclApp_HandleKeys(byte portAndAction, byte keyCode) {
     LREP("zclApp_HandleKeys portAndAction=0x%X keyCode=0x%X\r\n", portAndAction, keyCode);
@@ -175,15 +172,18 @@ uint16 zclApp_event_loop(uint8 task_id, uint16 events) {
     return 0;
 }
 
-//FYI: https://www.kane.co.uk/knowledge-centre/what-are-safe-levels-of-co-and-co2-in-rooms
+// FYI: https://www.kane.co.uk/knowledge-centre/what-are-safe-levels-of-co-and-co2-in-rooms
 static void zclApp_LedFeedback(void) {
-    HalLedSet(HAL_LED_ALL, HAL_LED_MODE_OFF);
     if (zclApp_Config.LedFeedback) {
         if (zclApp_Sensors.CO2_PPM > 2000) {
-            HalLedSet(HAL_LED_3, HAL_LED_MODE_ON);
+            HalLedSet(HAL_LED_3, HAL_LED_MODE_FLASH);
+            HalLedSet(HAL_LED_2, HAL_LED_MODE_OFF);
         } else if (zclApp_Sensors.CO2_PPM > 1000) {
-            HalLedSet(HAL_LED_2, HAL_LED_MODE_ON);
+            HalLedSet(HAL_LED_2, HAL_LED_MODE_FLASH);
+            HalLedSet(HAL_LED_3, HAL_LED_MODE_OFF);
         }
+    } else {
+        HalLedSet(HAL_LED_2 | HAL_LED_3, HAL_LED_MODE_OFF);
     }
 }
 
@@ -201,19 +201,18 @@ static void zclApp_ReadSensors(void) {
         break;
     case 1:
         zclApp_Sensors.CO2_PPM = zclApp_SenseAirRead();
-        bdb_RepChangedAttrValue(zclApp_FirstEP.EndPoint, CO2_LEVEL, ATTRID_CO2_LEVEL_MEASURED_VALUE);
         break;
     case 2:
-        // zclApp_Sensors.Temperature = readTemperature();
-        // if (zclApp_Sensors.Temperature != 1) {
-        //     LREP("ReadDS18B20 t=%d\r\n", zclApp_Sensors.Temperature);
-        //     bdb_RepChangedAttrValue(zclApp_FirstEP.EndPoint, TEMP, ATTRID_MS_TEMPERATURE_MEASURED_VALUE);
-        // } else {
-        //     LREPMaster("ReadDS18B20 error\r\n");
-        // }
+        zclApp_Sensors.Temperature = readTemperature();
+        if (zclApp_Sensors.Temperature == 1) {
+            LREPMaster("ReadDS18B20 error\r\n");
+        } else {
+            LREP("ReadDS18B20 t=%d\r\n", zclApp_Sensors.Temperature);
+        }
         break;
 
     default:
+        bdb_RepChangedAttrValue(zclApp_FirstEP.EndPoint, TEMP, ATTRID_MS_TEMPERATURE_MEASURED_VALUE);
         osal_stop_timerEx(zclApp_TaskID, APP_READ_SENSORS_EVT);
         osal_clear_event(zclApp_TaskID, APP_READ_SENSORS_EVT);
         currentSensorsReadingPhase = 0;
@@ -224,9 +223,6 @@ static void zclApp_ReadSensors(void) {
 
 static void zclApp_Report(void) {
     osal_start_reload_timer(zclApp_TaskID, APP_READ_SENSORS_EVT, 500);
-
-    // bdb_RepChangedAttrValue(zclApp_FirstEP.EndPoint, CO2_LEVEL, ATTRID_CO2_LEVEL_MEASURED_VALUE);
-    // bdb_RepChangedAttrValue(zclApp_FirstEP.EndPoint, TEMP, ATTRID_MS_TEMPERATURE_MEASURED_VALUE);
 }
 
 static void zclApp_BasicResetCB(void) {
