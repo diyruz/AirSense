@@ -58,7 +58,7 @@
     #define HAL_UART_ISR 2
 #endif
 
-#define FACTORY_RESET_HOLD_TIME_LONG 3000
+#define FACTORY_RESET_HOLD_TIME_LONG 5000
 
 
 #ifdef DO_DEBUG_UART
