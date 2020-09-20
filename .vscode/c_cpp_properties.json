@@ -5,6 +5,8 @@
         "defines": ["HAL_BOARD_CHDTECH_DEV", "HAL_I2C=TRUE", "HAL_I2C_MASTER"],
         "includePath": [
             "${workspaceRoot}",
+            "${workspaceRoot}/Source",
+            "${workspaceRoot}/zstack-lib",
             "${env:ZSTACK_PATH}/Components/mac/include/",
             "${env:ZSTACK_PATH}/Components/mt",
             "${env:ZSTACK_PATH}/Components/zmac",

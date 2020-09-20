@@ -55,18 +55,27 @@ const uint8 zclApp_PowerSource = POWER_SOURCE_MAINS_1_PHASE;
 #define DEFAULT_SensorTolerance 0
 #define DEFAULT_LedFeedback TRUE
 #define DEFAULT_DisableABC TRUE
+// FYI: https://www.kane.co.uk/knowledge-centre/what-are-safe-levels-of-co-and-co2-in-rooms
+#define DEFAULT_Threshold1_PPM 1000
+#define DEFAULT_Threshold2_PPM 2000
 
 
 
 application_config_t zclApp_Config = {
     .SensorTolerance = DEFAULT_SensorTolerance,
     .LedFeedback = DEFAULT_LedFeedback,
-    .DisableABC = DEFAULT_DisableABC
+    .DisableABC = DEFAULT_DisableABC,
+    .Threshold1_PPM = DEFAULT_Threshold1_PPM,
+    .Threshold2_PPM = DEFAULT_Threshold2_PPM
 };
 
 sensors_state_t zclApp_Sensors = {
     .CO2_PPM = 0,
-    .Temperature = 0
+    .Temperature = 0,
+    .BME280_Temperature_Sensor_MeasuredValue = 0,
+    .BME280_PressureSensor_MeasuredValue = 0,
+    .BME280_PressureSensor_MeasuredValueHPA= 0,
+    .BME280_HumiditySensor_MeasuredValue = 0
 };
 
 
@@ -87,11 +96,18 @@ CONST zclAttrRec_t zclApp_AttrsFirstEP[] = {
     {BASIC, {ATTRID_BASIC_SW_BUILD_ID, ZCL_UINT8, R, (void *)&zclApp_ApplicationVersion}},
 
     {TEMP, {ATTRID_MS_TEMPERATURE_MEASURED_VALUE, ZCL_INT16, RR, (void *)&zclApp_Sensors.Temperature}},
+    {PRESSURE, {ATTRID_MS_PRESSURE_MEASUREMENT_MEASURED_VALUE, ZCL_INT16, RR, (void *)&zclApp_Sensors.BME280_PressureSensor_MeasuredValue}},
+    {PRESSURE, {ATTRID_MS_PRESSURE_MEASUREMENT_MEASURED_VALUE_HPA, ZCL_UINT32, RR, (void *)&zclApp_Sensors.BME280_PressureSensor_MeasuredValueHPA}},
+    {HUMIDITY, {ATTRID_MS_RELATIVE_HUMIDITY_MEASURED_VALUE, ZCL_UINT16, RR, (void *)&zclApp_Sensors.BME280_HumiditySensor_MeasuredValue}},
+
     {TEMP, {ATTRID_MS_TEMPERATURE_MEASUREMENT_CO2_LEVEL_MEASURED_VALUE, ZCL_UINT16, RR, (void *)&zclApp_Sensors.CO2_PPM}},
     {TEMP, {ATTRID_CO2_TOLERANCE, ZCL_UINT8, RW, (void *)&zclApp_Config.SensorTolerance}},
     {TEMP, {ATTRID_DISABLE_ABC, ZCL_DATATYPE_BOOLEAN, RW, (void *)&zclApp_Config.DisableABC}},
-    {TEMP, {ATTRID_LED_FEEDBACK, ZCL_DATATYPE_BOOLEAN, RW, (void *)&zclApp_Config.LedFeedback}}
+    {TEMP, {ATTRID_LED_FEEDBACK, ZCL_DATATYPE_BOOLEAN, RW, (void *)&zclApp_Config.LedFeedback}},
+    {TEMP, {ATTRID_THRESHOLD1_PPM, ZCL_UINT16, RW, (void *)&zclApp_Config.Threshold1_PPM}},
+    {TEMP, {ATTRID_THRESHOLD2_PPM, ZCL_UINT16, RW, (void *)&zclApp_Config.Threshold2_PPM}}
 };
+
 
 uint8 CONST zclApp_AttrsCount = (sizeof(zclApp_AttrsFirstEP) / sizeof(zclApp_AttrsFirstEP[0]));
 
@@ -99,9 +115,11 @@ const cId_t zclApp_InClusterList[] = {ZCL_CLUSTER_ID_GEN_BASIC};
 
 #define APP_MAX_INCLUSTERS (sizeof(zclApp_InClusterList) / sizeof(zclApp_InClusterList[0]))
 
-const cId_t zclApp_OutClusterList[] = {TEMP};
+const cId_t zclApp_OutClusterList[] = {TEMP,  HUMIDITY, PRESSURE};
+
 
 #define APP_MAX_OUT_CLUSTERS (sizeof(zclApp_OutClusterList) / sizeof(zclApp_OutClusterList[0]))
+
 
 SimpleDescriptionFormat_t zclApp_FirstEP = {
     1,                             //  int Endpoint;
@@ -115,8 +133,11 @@ SimpleDescriptionFormat_t zclApp_FirstEP = {
     (cId_t *)zclApp_OutClusterList //  byte *pAppInClusterList;
 };
 
+
 void zclApp_ResetAttributesToDefaultValues(void) {
     zclApp_Config.SensorTolerance = DEFAULT_SensorTolerance;
     zclApp_Config.LedFeedback = DEFAULT_LedFeedback;
     zclApp_Config.DisableABC = DEFAULT_DisableABC;
+    zclApp_Config.Threshold1_PPM = DEFAULT_Threshold1_PPM;
+    zclApp_Config.Threshold2_PPM = DEFAULT_Threshold2_PPM;
 }
