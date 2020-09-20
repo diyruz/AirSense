@@ -121,12 +121,11 @@ void zclApp_Init(byte task_id) {
     zcl_registerForMsg(zclApp_TaskID);
     RegisterForKeys(zclApp_TaskID);
 
-    ZMacSetTransmitPower(APP_TX_POWER);
 
     LREP("Build %s \r\n", zclApp_DateCodeNT);
 
     HalI2CInit();
-    osal_start_reload_timer(zclApp_TaskID, APP_REPORT_EVT, APP_REPORT_DELAY); // APP_REPORT_DELAY);
+    osal_start_reload_timer(zclApp_TaskID, APP_REPORT_EVT, APP_REPORT_DELAY);
 
 }
 static void zclApp_HandleKeys(byte portAndAction, byte keyCode) {

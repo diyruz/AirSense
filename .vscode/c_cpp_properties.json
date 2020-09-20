@@ -2,7 +2,7 @@
     "configurations": [{
         "name": "Mac",
         "forcedInclude": ["${workspaceRoot}/source/preinclude.h"],
-        "defines": ["HAL_BOARD_CHDTECH_DEV", "HAL_I2C=TRUE", "HAL_I2C_MASTER"],
+        "defines": ["HAL_BOARD_TARGET", "HAL_I2C=TRUE", "HAL_I2C_MASTER"],
         "includePath": [
             "${workspaceRoot}",
             "${workspaceRoot}/Source",

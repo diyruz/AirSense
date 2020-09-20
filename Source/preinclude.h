@@ -45,14 +45,12 @@
     #define SENSEAIR_UART_PORT 0x00
     #define HAL_UART_DMA 1
     #define HAL_UART_ISR 0
-    #define INT_HEAP_LEN (3000 - 0xA1)
-    // #define INT_HEAP_LEN (2885 - 0x39 - 0x1)
+    #define INT_HEAP_LEN 2585
     // #define POWER_SAVING
 #elif defined(HAL_BOARD_CHDTECH_DEV)
+    #define SENSEAIR_UART_PORT 0x01
     #define HAL_KEY_P0_INPUT_PINS BV(1)
-    #define APP_TX_POWER TX_PWR_PLUS_4
     #define DO_DEBUG_UART
-    #define HAL_UART_ISR 2
 #endif
 
 #define FACTORY_RESET_HOLD_TIME_LONG 5000
