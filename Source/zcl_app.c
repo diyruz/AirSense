@@ -99,7 +99,7 @@ static zclGeneral_AppCallbacks_t zclApp_CmdCallbacks = {
     NULL                 // RSSI Location Response command
 };
 void zclApp_Init(byte task_id) {
-    HalLedSet(HAL_LED_ALL, HAL_LED_MODE_FLASH);
+    HalLedSet(HAL_LED_ALL, HAL_LED_MODE_BLINK);
     DebugInit();
 
     zclApp_RestoreAttributesFromNV();
