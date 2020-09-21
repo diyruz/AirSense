@@ -54,7 +54,7 @@ const uint8 zclApp_PowerSource = POWER_SOURCE_MAINS_1_PHASE;
 
 #define DEFAULT_SensorTolerance 0
 #define DEFAULT_LedFeedback TRUE
-#define DEFAULT_DisableABC TRUE
+#define DEFAULT_DisableABC FALSE
 // FYI: https://www.kane.co.uk/knowledge-centre/what-are-safe-levels-of-co-and-co2-in-rooms
 #define DEFAULT_Threshold1_PPM 1000
 #define DEFAULT_Threshold2_PPM 2000
