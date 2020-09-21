@@ -94,7 +94,7 @@ const device = {
     vendor: 'DIYRuZ',
     description: '[Air quality sensor](http://modkam.ru/?p=xxxx)',
     supports: '',
-    homeassistant: [hass.temperature, hass.pressure, hass.humidity, hass.co2],
+    homeassistant: [hass.temperature, hass.presure, hass.humidity, hass.co2],
     fromZigbee: [
         fromZigbeeConverters.temperature,
         fromZigbeeConverters.humidity,
