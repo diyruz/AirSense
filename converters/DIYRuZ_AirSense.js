@@ -26,7 +26,9 @@ const fz = {
         type: ['attributeReport', 'readResponse'],
         convert: (model, msg, publish, options, meta) => {
             if (msg.data[CO2_LEVEL_KEY]) {
-                return {co2: msg.data[CO2_LEVEL_KEY]};
+                return {
+                    co2: msg.data[CO2_LEVEL_KEY]
+                };
             }
         },
     },
@@ -47,12 +49,52 @@ const fz = {
     },
 };
 
+const hass = {
+    co2: {
+        type: 'sensor',
+        object_id: 'co2',
+        discovery_payload: {
+            unit_of_measurement: 'ppm',
+            icon: 'mdi:molecule-co2',
+            value_template: '{{ value_json.co2 }}',
+        },
+    },
+    temperature: {
+        type: 'sensor',
+        object_id: 'temperature',
+        discovery_payload: {
+            unit_of_measurement: '°C',
+            device_class: 'temperature',
+            value_template: '{{ value_json.temperature }}',
+        },
+    },
+    humidity: {
+        type: 'sensor',
+        object_id: 'humidity',
+        discovery_payload: {
+            unit_of_measurement: '%',
+            device_class: 'humidity',
+            value_template: '{{ value_json.humidity }}',
+        },
+    },
+    presure: {
+        type: 'sensor',
+        object_id: 'pressure',
+        discovery_payload: {
+            unit_of_measurement: 'hPa',
+            device_class: 'pressure',
+            value_template: '{{ value_json.pressure }}',
+        },
+    }
+};
+
 const device = {
     zigbeeModel: ['DIYRuZ_AirSense'],
     model: 'DIYRuZ_AirSense',
     vendor: 'DIYRuZ',
     description: '[Air quality sensor](http://modkam.ru/?p=xxxx)',
     supports: '',
+    homeassistant: [hass.temperature, hass.pressure, hass.humidity, hass.co2],
     fromZigbee: [
         fromZigbeeConverters.temperature,
         fromZigbeeConverters.humidity,
