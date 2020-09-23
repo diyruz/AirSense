@@ -8,11 +8,11 @@
             <name>ALL</name>
             <member>
                 <project>GenericApp</project>
-                <configuration>CHDTECH_DEV</configuration>
+                <configuration>DIYRuZ_AirSense_EndDevice</configuration>
             </member>
             <member>
                 <project>GenericApp</project>
-                <configuration>HAL_BOARD_TARGET</configuration>
+                <configuration>DIYRuZ_AirSense_Router</configuration>
             </member>
         </batchDefinition>
     </batchBuild>

@@ -45,7 +45,7 @@
     #define SENSEAIR_UART_PORT 0x00
     #define HAL_UART_DMA 1
     #define HAL_UART_ISR 0
-    #define INT_HEAP_LEN 2585
+    #define INT_HEAP_LEN (2885-0x2e)
     // #define POWER_SAVING
 #elif defined(HAL_BOARD_CHDTECH_DEV)
     #define SENSEAIR_UART_PORT 0x01
