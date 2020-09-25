@@ -14,6 +14,14 @@
                 <project>GenericApp</project>
                 <configuration>DIYRuZ_AirSense_Router</configuration>
             </member>
+            <member>
+                <project>GenericApp</project>
+                <configuration>DIYRuZ_AirSense_Router_CC2592</configuration>
+            </member>
+            <member>
+                <project>GenericApp</project>
+                <configuration>DIYRuZ_AirSense_EndDevice_CC2592</configuration>
+            </member>
         </batchDefinition>
     </batchBuild>
 </workspace>
