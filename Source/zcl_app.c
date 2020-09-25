@@ -54,8 +54,6 @@
 /*********************************************************************
  * GLOBAL VARIABLES
  */
-
-extern bool requestNewTrustCenterLinkKey;
 byte zclApp_TaskID;
 
 /*********************************************************************
@@ -104,9 +102,7 @@ void zclApp_Init(byte task_id) {
     zclApp_RestoreAttributesFromNV();
     zclApp_SenseAirInit();
     zclApp_SenseAirSetABC(zclApp_Config.EnableABC);
-    // this is important to allow connects throught routers
-    // to make this work, coordinator should be compiled with this flag #define TP2_LEGACY_ZC
-    requestNewTrustCenterLinkKey = FALSE;
+  
 
     zclApp_TaskID = task_id;
 
