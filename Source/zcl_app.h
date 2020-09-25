@@ -40,7 +40,7 @@ extern "C" {
 // Carbon Dioxide (CO2)
 #define ATTRID_MS_TEMPERATURE_MEASUREMENT_CO2_LEVEL_MEASURED_VALUE 0x0200
 #define ATTRID_CO2_TOLERANCE 0x0201
-#define ATTRID_DISABLE_ABC 0x0202
+#define ATTRID_ENABLE_ABC 0x0202
 #define ATTRID_LED_FEEDBACK 0x0203
 #define ATTRID_THRESHOLD1_PPM 0x0204
 #define ATTRID_THRESHOLD2_PPM 0x0205
@@ -60,7 +60,7 @@ extern "C" {
 typedef struct {
     uint16 SensorTolerance;
     uint8 LedFeedback;
-    uint8 DisableABC;
+    uint8 EnableABC;
     uint16 Threshold1_PPM;
     uint16 Threshold2_PPM;
 } application_config_t;

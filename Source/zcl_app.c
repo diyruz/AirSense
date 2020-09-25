@@ -103,7 +103,7 @@ void zclApp_Init(byte task_id) {
 
     zclApp_RestoreAttributesFromNV();
     zclApp_SenseAirInit();
-    zclApp_SenseAirSetABC(zclApp_Config.DisableABC);
+    zclApp_SenseAirSetABC(zclApp_Config.EnableABC);
     // this is important to allow connects throught routers
     // to make this work, coordinator should be compiled with this flag #define TP2_LEGACY_ZC
     requestNewTrustCenterLinkKey = FALSE;
@@ -254,7 +254,7 @@ static void zclApp_BasicResetCB(void) {
 
 static ZStatus_t zclApp_ReadWriteAuthCB(afAddrType_t *srcAddr, zclAttrRec_t *pAttr, uint8 oper) {
     LREPMaster("AUTH CB called\r\n");
-    zclApp_SenseAirSetABC(zclApp_Config.DisableABC);
+    zclApp_SenseAirSetABC(zclApp_Config.EnableABC);
     osal_start_timerEx(zclApp_TaskID, APP_SAVE_ATTRS_EVT, 2000);
     return ZSuccess;
 }

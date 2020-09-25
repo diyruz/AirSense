@@ -54,7 +54,7 @@ const uint8 zclApp_PowerSource = POWER_SOURCE_MAINS_1_PHASE;
 
 #define DEFAULT_SensorTolerance 0
 #define DEFAULT_LedFeedback TRUE
-#define DEFAULT_DisableABC FALSE
+#define DEFAULT_EnableABC TRUE
 // FYI: https://www.kane.co.uk/knowledge-centre/what-are-safe-levels-of-co-and-co2-in-rooms
 #define DEFAULT_Threshold1_PPM 1000
 #define DEFAULT_Threshold2_PPM 2000
@@ -64,7 +64,7 @@ const uint8 zclApp_PowerSource = POWER_SOURCE_MAINS_1_PHASE;
 application_config_t zclApp_Config = {
     .SensorTolerance = DEFAULT_SensorTolerance,
     .LedFeedback = DEFAULT_LedFeedback,
-    .DisableABC = DEFAULT_DisableABC,
+    .EnableABC = DEFAULT_EnableABC,
     .Threshold1_PPM = DEFAULT_Threshold1_PPM,
     .Threshold2_PPM = DEFAULT_Threshold2_PPM
 };
@@ -102,7 +102,7 @@ CONST zclAttrRec_t zclApp_AttrsFirstEP[] = {
 
     {TEMP, {ATTRID_MS_TEMPERATURE_MEASUREMENT_CO2_LEVEL_MEASURED_VALUE, ZCL_UINT16, RR, (void *)&zclApp_Sensors.CO2_PPM}},
     {TEMP, {ATTRID_CO2_TOLERANCE, ZCL_UINT8, RW, (void *)&zclApp_Config.SensorTolerance}},
-    {TEMP, {ATTRID_DISABLE_ABC, ZCL_DATATYPE_BOOLEAN, RW, (void *)&zclApp_Config.DisableABC}},
+    {TEMP, {ATTRID_ENABLE_ABC, ZCL_DATATYPE_BOOLEAN, RW, (void *)&zclApp_Config.EnableABC}},
     {TEMP, {ATTRID_LED_FEEDBACK, ZCL_DATATYPE_BOOLEAN, RW, (void *)&zclApp_Config.LedFeedback}},
     {TEMP, {ATTRID_THRESHOLD1_PPM, ZCL_UINT16, RW, (void *)&zclApp_Config.Threshold1_PPM}},
     {TEMP, {ATTRID_THRESHOLD2_PPM, ZCL_UINT16, RW, (void *)&zclApp_Config.Threshold2_PPM}}
@@ -137,7 +137,7 @@ SimpleDescriptionFormat_t zclApp_FirstEP = {
 void zclApp_ResetAttributesToDefaultValues(void) {
     zclApp_Config.SensorTolerance = DEFAULT_SensorTolerance;
     zclApp_Config.LedFeedback = DEFAULT_LedFeedback;
-    zclApp_Config.DisableABC = DEFAULT_DisableABC;
+    zclApp_Config.EnableABC = DEFAULT_EnableABC;
     zclApp_Config.Threshold1_PPM = DEFAULT_Threshold1_PPM;
     zclApp_Config.Threshold2_PPM = DEFAULT_Threshold2_PPM;
 }
