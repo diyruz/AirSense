@@ -196,7 +196,7 @@ extern void MAC_RfFrontendSetup(void);
 #define PREFETCH_DISABLE()    st( FCTL = 0x04; )
 
 /* ----------- Board Initialization ---------- */
-#if defined (HAL_BOARD_CHDTECH_DEV)
+#if defined (HAL_BOARD_CHDTECH_DEV) || !defined(HAL_PA_LNA_CC2592)
 #define HAL_BOARD_INIT()                                         \
 {                                                                \
   uint16 i;                                                      \
