@@ -224,6 +224,8 @@ static void zclApp_ReadSensors(void) {
         break;
     case 3:
         zclApp_RequestBME280(&bme_dev);
+        break;
+
     case 4:
         zclApp_ReadBME280(&bme_dev);
         break;
