@@ -100,7 +100,6 @@ static zclGeneral_AppCallbacks_t zclApp_CmdCallbacks = {
 };
 void zclApp_Init(byte task_id) {
     HalLedSet(HAL_LED_ALL, HAL_LED_MODE_BLINK);
-    DebugInit();
 
     zclApp_RestoreAttributesFromNV();
     zclApp_SenseAirInit();
