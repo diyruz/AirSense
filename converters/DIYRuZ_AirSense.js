@@ -106,7 +106,6 @@ const device = {
     ],
     meta: {
         configureKey: 1,
-        disableDefaultResponse: true,
     },
     configure: async (device, coordinatorEndpoint) => {
         const firstEndpoint = device.getEndpoint(1);
