@@ -237,7 +237,7 @@ extern void MAC_RfFrontendSetup(void);
   /* set direction for GPIO outputs  */                          \
   /* For SE2431L PA LNA this sets ANT_SEL to output */           \
   /* For CC2592 this enables LNA */                              \
-  P1DIR |= BV(0);                                                \
+  P1DIR |= BV(0) | BV(1);                                        \
                                                                  \
   /* Set PA/LNA HGM control P0_7 */                              \
   P0DIR |= BV(7);                                                \
