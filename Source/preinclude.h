@@ -50,6 +50,8 @@
         #define INT_HEAP_LEN 2835
     #endif
 #elif defined(HAL_BOARD_CHDTECH_DEV)
+    #define HAL_UART_DMA 1
+    #define HAL_UART_ISR 2
     #define SENSEAIR_UART_PORT 0x01
     #define HAL_KEY_P0_INPUT_PINS BV(1)
     #define DO_DEBUG_UART
