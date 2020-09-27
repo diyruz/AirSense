@@ -80,6 +80,7 @@ static void zclApp_ReadSensors(void);
 static void zclApp_HandleKeys(byte portAndAction, byte keyCode);
 static void zclApp_RequestBME280(struct bme280_dev *dev);
 static void zclApp_ReadBME280(struct bme280_dev *dev);
+static void zclApp_InitCO2Uart(void);
 
 static ZStatus_t zclApp_ReadWriteAuthCB(afAddrType_t *srcAddr, zclAttrRec_t *pAttr, uint8 oper);
 
@@ -100,10 +101,8 @@ void zclApp_Init(byte task_id) {
     HalLedSet(HAL_LED_ALL, HAL_LED_MODE_BLINK);
 
     zclApp_RestoreAttributesFromNV();
-    zclApp_SenseAirInit();
+    zclApp_InitCO2Uart();
     zclApp_SenseAirSetABC(zclApp_Config.EnableABC);
-  
-
     zclApp_TaskID = task_id;
 
     bdb_RegisterSimpleDescriptor(&zclApp_FirstEP);
@@ -120,6 +119,7 @@ void zclApp_Init(byte task_id) {
     LREP("Build %s \r\n", zclApp_DateCodeNT);
 
     HalI2CInit();
+    
     osal_start_reload_timer(zclApp_TaskID, APP_REPORT_EVT, APP_REPORT_DELAY);
 
 }
@@ -130,6 +130,24 @@ static void zclApp_HandleKeys(byte portAndAction, byte keyCode) {
     if (portAndAction & HAL_KEY_PRESS) {
         LREPMaster("Key press\r\n");
         osal_start_timerEx(zclApp_TaskID, APP_REPORT_EVT, 200);
+    }
+}
+
+static void zclApp_InitCO2Uart(void) {
+    halUARTCfg_t halUARTConfig;
+    halUARTConfig.configured = TRUE;
+    halUARTConfig.baudRate = HAL_UART_BR_9600;
+    halUARTConfig.flowControl = FALSE;
+    halUARTConfig.flowControlThreshold = 48; // this parameter indicates number of bytes left before Rx Buffer
+                                             // reaches maxRxBufSize
+    halUARTConfig.idleTimeout = 10;          // this parameter indicates rx timeout period in millisecond
+    halUARTConfig.rx.maxBufSize = 15;
+    halUARTConfig.tx.maxBufSize = 15;
+    halUARTConfig.intEnable = TRUE;
+    halUARTConfig.callBackFunc = NULL;
+    HalUARTInit();
+    if (HalUARTOpen(SENSEAIR_UART_PORT, &halUARTConfig) == HAL_UART_SUCCESS) {
+        LREPMaster("Initialized sensair \r\n");
     }
 }
 
