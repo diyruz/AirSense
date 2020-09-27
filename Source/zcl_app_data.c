@@ -152,4 +152,7 @@ void zclApp_ResetAttributesToDefaultValues(void) {
     zclApp_Config.EnableABC = DEFAULT_EnableABC;
     zclApp_Config.Threshold1_PPM = DEFAULT_Threshold1_PPM;
     zclApp_Config.Threshold2_PPM = DEFAULT_Threshold2_PPM;
+    zclApp_Config.TemperatureOffset = DEFAULT_TemperatureOffset;
+    zclApp_Config.HumidityOffset = DEFAULT_HumidityOffset;
+    zclApp_Config.PressureOffset = DEFAULT_PressureOffset;
 }
