@@ -35,6 +35,7 @@
 #include "hal_i2c.h"
 #include "hal_key.h"
 #include "hal_led.h"
+#include "mhz19.h"
 #include "senseair.h"
 #include "utils.h"
 #include "version.h"
@@ -59,19 +60,18 @@ byte zclApp_TaskID;
 /*********************************************************************
  * GLOBAL FUNCTIONS
  */
-
+void user_delay_ms(uint32_t period);
+void user_delay_ms(uint32_t period) { MicroWait(period * 1000); }
 /*********************************************************************
  * LOCAL VARIABLES
  */
-void user_delay_ms(uint32_t period);
-void user_delay_ms(uint32_t period) { MicroWait(period * 1000); }
 
+SensorType_t sensorType = UNKNOWN;
 
 struct bme280_dev bme_dev = {.dev_id = BME280_I2C_ADDR_PRIM, .intf = BME280_I2C_INTF, .read = I2C_ReadMultByte, .write = I2C_WriteMultByte, .delay_ms = user_delay_ms};
 /*********************************************************************
  * LOCAL FUNCTIONS
  */
-
 static void zclApp_Report(void);
 static void zclApp_BasicResetCB(void);
 static void zclApp_RestoreAttributesFromNV(void);
@@ -81,8 +81,10 @@ static void zclApp_HandleKeys(byte portAndAction, byte keyCode);
 static void zclApp_RequestBME280(struct bme280_dev *dev);
 static void zclApp_ReadBME280(struct bme280_dev *dev);
 static void zclApp_InitCO2Uart(void);
-
 static ZStatus_t zclApp_ReadWriteAuthCB(afAddrType_t *srcAddr, zclAttrRec_t *pAttr, uint8 oper);
+static void zclApp_DetectSensorType(void);
+static void zclApp_StopSensorDetection(void);
+static void zclApp_InitSensors(void);
 
 /*********************************************************************
  * ZCL General Profile Callback table
@@ -102,7 +104,6 @@ void zclApp_Init(byte task_id) {
 
     zclApp_RestoreAttributesFromNV();
     zclApp_InitCO2Uart();
-    zclApp_SenseAirSetABC(zclApp_Config.EnableABC);
     zclApp_TaskID = task_id;
 
     bdb_RegisterSimpleDescriptor(&zclApp_FirstEP);
@@ -115,12 +116,11 @@ void zclApp_Init(byte task_id) {
     zcl_registerForMsg(zclApp_TaskID);
     RegisterForKeys(zclApp_TaskID);
 
-
     LREP("Build %s \r\n", zclApp_DateCodeNT);
 
     HalI2CInit();
     osal_start_reload_timer(zclApp_TaskID, APP_REPORT_EVT, APP_REPORT_DELAY);
-
+    osal_start_reload_timer(zclApp_TaskID, APP_DETECT_SENSORS_EVT, 250);
 }
 static void zclApp_HandleKeys(byte portAndAction, byte keyCode) {
     LREP("zclApp_HandleKeys portAndAction=0x%X keyCode=0x%X\r\n", portAndAction, keyCode);
@@ -145,7 +145,7 @@ static void zclApp_InitCO2Uart(void) {
     halUARTConfig.intEnable = TRUE;
     halUARTConfig.callBackFunc = NULL;
     HalUARTInit();
-    if (HalUARTOpen(SENSEAIR_UART_PORT, &halUARTConfig) == HAL_UART_SUCCESS) {
+    if (HalUARTOpen(CO2_UART_PORT, &halUARTConfig) == HAL_UART_SUCCESS) {
         LREPMaster("Initialized sensair \r\n");
     }
 }
@@ -159,7 +159,7 @@ uint16 zclApp_event_loop(uint8 task_id, uint16 events) {
             switch (MSGpkt->hdr.event) {
             case KEY_CHANGE:
                 zclApp_HandleKeys(((keyChange_t *)MSGpkt)->state, ((keyChange_t *)MSGpkt)->keys);
-            break;
+                break;
 
             case ZCL_INCOMING_MSG:
                 if (((zclIncomingMsg_t *)MSGpkt)->attrCmd) {
@@ -193,6 +193,12 @@ uint16 zclApp_event_loop(uint8 task_id, uint16 events) {
         zclApp_ReadSensors();
         return (events ^ APP_READ_SENSORS_EVT);
     }
+
+    if (events & APP_DETECT_SENSORS_EVT) {
+        LREPMaster("APP_DETECT_SENSORS_EVT\r\n");
+        zclApp_DetectSensorType();
+        return (events ^ APP_DETECT_SENSORS_EVT);
+    }
     return 0;
 }
 
@@ -210,6 +216,67 @@ static void zclApp_LedFeedback(void) {
     }
 }
 
+static void zclApp_InitSensors(void) {
+    switch (sensorType) {
+    case SENSEAIR:
+        SenseAir_SetABC(zclApp_Config.EnableABC);
+        break;
+    case MHZ19:
+        MHZ19_SetABC(zclApp_Config.EnableABC);
+        // MHZ19_SetRange5000PPM();
+        break;
+
+    default:
+        LREPMaster("Sensor type UNKNOWN\r\n");
+        break;
+    }
+
+}
+
+static void zclApp_StopSensorDetection(void) {
+    osal_stop_timerEx(zclApp_TaskID, APP_DETECT_SENSORS_EVT);
+    osal_clear_event(zclApp_TaskID, APP_DETECT_SENSORS_EVT);
+}
+static void zclApp_DetectSensorType(void) {
+    static uint8 currentSensorsReadingPhase = 0;
+    uint16 result = 0;
+    if (sensorType == UNKNOWN) {
+        switch (currentSensorsReadingPhase++) {
+        case 0:
+            SenseAir_RequestMeasure();
+            break;
+
+        case 1:
+            result = SenseAir_Read();
+            if (result != 0) {
+                LREPMaster("Detected SENSEAIR\r\n");
+                sensorType = SENSEAIR;
+                zclApp_StopSensorDetection();
+                zclApp_InitSensors();
+            }
+            break;
+
+        case 2:
+            MHZ19_RequestMeasure();
+            break;
+        case 3:
+            result = MHZ19_Read();
+            if (result != 0) {
+                LREPMaster("Detected MHZ19\r\n");
+                sensorType = MHZ19;
+                zclApp_StopSensorDetection();
+                zclApp_InitSensors();
+            }
+            break;
+
+        default:
+            zclApp_StopSensorDetection();
+            currentSensorsReadingPhase = 0;
+
+            break;
+        }
+    }
+}
 static void zclApp_ReadSensors(void) {
     HalLedSet(HAL_LED_1, HAL_LED_MODE_BLINK);
     static uint8 currentSensorsReadingPhase = 0;
@@ -221,10 +288,33 @@ static void zclApp_ReadSensors(void) {
 
     switch (currentSensorsReadingPhase++) {
     case 0:
-        zclApp_SenseAirRequestMeasure();
+        switch (sensorType) {
+        case SENSEAIR:
+            SenseAir_RequestMeasure();
+            break;
+        case MHZ19:
+            MHZ19_RequestMeasure();
+            break;
+
+        default:
+            LREPMaster("Sensor type UNKNOWN\r\n");
+            break;
+        }
         break;
     case 1:
-        zclApp_Sensors.CO2_PPM = zclApp_SenseAirRead();
+        switch (sensorType) {
+        case SENSEAIR:
+            zclApp_Sensors.CO2_PPM = SenseAir_Read();
+            break;
+        case MHZ19:
+            zclApp_Sensors.CO2_PPM = MHZ19_Read();
+
+            break;
+
+        default:
+            LREPMaster("Sensor type UNKNOWN\r\n");
+            break;
+        }
         break;
     case 2:
         zclApp_Sensors.Temperature = readTemperature();
@@ -268,7 +358,7 @@ static void zclApp_BasicResetCB(void) {
 
 static ZStatus_t zclApp_ReadWriteAuthCB(afAddrType_t *srcAddr, zclAttrRec_t *pAttr, uint8 oper) {
     LREPMaster("AUTH CB called\r\n");
-    zclApp_SenseAirSetABC(zclApp_Config.EnableABC);
+    zclApp_InitSensors();
     osal_start_timerEx(zclApp_TaskID, APP_SAVE_ATTRS_EVT, 2000);
     return ZSuccess;
 }

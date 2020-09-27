@@ -6403,6 +6403,12 @@
             <name>$PROJ_DIR$\..\zstack-lib\hal_key.h</name>
         </file>
         <file>
+            <name>$PROJ_DIR$\..\zstack-lib\mhz19.c</name>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\..\zstack-lib\mhz19.h</name>
+        </file>
+        <file>
             <name>$PROJ_DIR$\..\zstack-lib\senseair.c</name>
         </file>
         <file>

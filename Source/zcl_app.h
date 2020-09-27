@@ -19,6 +19,7 @@ extern "C" {
 #define APP_REPORT_EVT 0x0001
 #define APP_SAVE_ATTRS_EVT 0x0002
 #define APP_READ_SENSORS_EVT 0x0004
+#define APP_DETECT_SENSORS_EVT 0x0008
 
 /*********************************************************************
  * MACROS
@@ -87,6 +88,10 @@ typedef struct {
     uint16 BME280_HumiditySensor_MeasuredValue;
 } sensors_state_t;
 
+
+typedef enum {
+  UNKNOWN, SENSEAIR, MHZ19
+} SensorType_t;
 /*********************************************************************
  * VARIABLES
  */

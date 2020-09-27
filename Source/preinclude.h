@@ -41,18 +41,18 @@
 
 #if defined(HAL_BOARD_TARGET)
     #define HAL_KEY_P2_INPUT_PINS BV(0)
-    #define SENSEAIR_UART_PORT 0x00
+    #define CO2_UART_PORT 0x00
     #define HAL_UART_DMA 1
     #define HAL_UART_ISR 0
     #if defined(RTR_NWK)
-        #define INT_HEAP_LEN 2350
+        #define INT_HEAP_LEN 2320
     #else
-        #define INT_HEAP_LEN 2800
+        #define INT_HEAP_LEN 2780
     #endif
 #elif defined(HAL_BOARD_CHDTECH_DEV)
     #define HAL_UART_DMA 1
     #define HAL_UART_ISR 2
-    #define SENSEAIR_UART_PORT 0x01
+    #define CO2_UART_PORT  0x01
     #define HAL_KEY_P0_INPUT_PINS BV(1)
     #define DO_DEBUG_UART
 #endif
@@ -63,7 +63,7 @@
 #ifdef DO_DEBUG_UART
     #define HAL_UART TRUE
     #define HAL_UART_DMA 1
-    #define INT_HEAP_LEN (2685 - 0x4B - 0xBB-0x50-0xae-0x50)
+    #define INT_HEAP_LEN 2060
 #endif
 
 // #define INT_HEAP_LEN (2685 - 0x4B - 0xBB-0x50-0xae)
