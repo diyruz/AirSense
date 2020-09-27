@@ -115,7 +115,7 @@ const cId_t zclApp_InClusterList[] = {ZCL_CLUSTER_ID_GEN_BASIC};
 
 #define APP_MAX_INCLUSTERS (sizeof(zclApp_InClusterList) / sizeof(zclApp_InClusterList[0]))
 
-const cId_t zclApp_OutClusterList[] = {TEMP,  HUMIDITY, PRESSURE};
+const cId_t zclApp_OutClusterList[] = {TEMP,  HUMIDITY, PRESSURE, CO2};
 
 
 #define APP_MAX_OUT_CLUSTERS (sizeof(zclApp_OutClusterList) / sizeof(zclApp_OutClusterList[0]))
