@@ -58,6 +58,9 @@ const uint8 zclApp_PowerSource = POWER_SOURCE_MAINS_1_PHASE;
 // FYI: https://www.kane.co.uk/knowledge-centre/what-are-safe-levels-of-co-and-co2-in-rooms
 #define DEFAULT_Threshold1_PPM 1000
 #define DEFAULT_Threshold2_PPM 2000
+#define DEFAULT_TemperatureOffset 0
+#define DEFAULT_PressureOffset 0
+#define DEFAULT_HumidityOffset 0
 
 
 
@@ -66,7 +69,10 @@ application_config_t zclApp_Config = {
     .LedFeedback = DEFAULT_LedFeedback,
     .EnableABC = DEFAULT_EnableABC,
     .Threshold1_PPM = DEFAULT_Threshold1_PPM,
-    .Threshold2_PPM = DEFAULT_Threshold2_PPM
+    .Threshold2_PPM = DEFAULT_Threshold2_PPM,
+    .TemperatureOffset = DEFAULT_TemperatureOffset,
+    .PressureOffset = DEFAULT_PressureOffset,
+    .HumidityOffset = DEFAULT_HumidityOffset
 };
 
 sensors_state_t zclApp_Sensors = {
@@ -96,9 +102,15 @@ CONST zclAttrRec_t zclApp_AttrsFirstEP[] = {
     {BASIC, {ATTRID_BASIC_SW_BUILD_ID, ZCL_DATATYPE_CHAR_STR, R, (void *)zclApp_DateCode}},
 
     {TEMP, {ATTRID_MS_TEMPERATURE_MEASURED_VALUE, ZCL_INT16, RR, (void *)&zclApp_Sensors.Temperature}},
+    {TEMP, {ATTRID_TemperatureOffset, ZCL_INT16, RW, (void *)&zclApp_Config.TemperatureOffset}},
+
+
     {PRESSURE, {ATTRID_MS_PRESSURE_MEASUREMENT_MEASURED_VALUE, ZCL_INT16, RR, (void *)&zclApp_Sensors.BME280_PressureSensor_MeasuredValue}},
     {PRESSURE, {ATTRID_MS_PRESSURE_MEASUREMENT_MEASURED_VALUE_HPA, ZCL_UINT32, RR, (void *)&zclApp_Sensors.BME280_PressureSensor_MeasuredValueHPA}},
+    {PRESSURE, {ATTRID_PressureOffset, ZCL_UINT32, RW, (void *)&zclApp_Config.PressureOffset}},
+
     {HUMIDITY, {ATTRID_MS_RELATIVE_HUMIDITY_MEASURED_VALUE, ZCL_UINT16, RR, (void *)&zclApp_Sensors.BME280_HumiditySensor_MeasuredValue}},
+    {HUMIDITY, {ATTRID_HumidityOffset, ZCL_INT16, RW, (void *)&zclApp_Config.HumidityOffset}},
 
     {CO2, {ATTRID_CO2_MEASURED_VALUE, ZCL_SINGLE, RR, (void *)&zclApp_Sensors.CO2_PPM}},
     {CO2, {ATTRID_CO2_TOLERANCE, ZCL_SINGLE, RW, (void *)&zclApp_Config.SensorTolerance}},

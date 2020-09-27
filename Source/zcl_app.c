@@ -119,7 +119,6 @@ void zclApp_Init(byte task_id) {
     LREP("Build %s \r\n", zclApp_DateCodeNT);
 
     HalI2CInit();
-    
     osal_start_reload_timer(zclApp_TaskID, APP_REPORT_EVT, APP_REPORT_DELAY);
 
 }
@@ -232,7 +231,8 @@ static void zclApp_ReadSensors(void) {
         if (zclApp_Sensors.Temperature == 1) {
             LREPMaster("ReadDS18B20 error\r\n");
         } else {
-            LREP("ReadDS18B20 t=%d\r\n", zclApp_Sensors.Temperature);
+            zclApp_Sensors.Temperature += zclApp_Config.TemperatureOffset;
+            LREP("ReadDS18B20 t=%d offset=\r\n", zclApp_Sensors.Temperature, zclApp_Config.TemperatureOffset);
         }
         break;
     case 3:
@@ -317,11 +317,11 @@ static void zclApp_ReadBME280(struct bme280_dev *dev) {
     int8_t rslt = bme280_get_sensor_data(BME280_ALL, &bme_results, dev);
     if (rslt == BME280_OK) {
         LREP("ReadBME280 t=%ld, p=%ld, h=%ld\r\n", bme_results.temperature, bme_results.pressure, bme_results.humidity);
-        zclApp_Sensors.BME280_Temperature_Sensor_MeasuredValue = (int16)bme_results.temperature;
-        zclApp_Sensors.BME280_PressureSensor_MeasuredValueHPA = bme_results.pressure;
-        zclApp_Sensors.BME280_PressureSensor_MeasuredValue = bme_results.pressure / 100;
-        zclApp_Sensors.BME280_HumiditySensor_MeasuredValue = (uint16)(bme_results.humidity * 100 / 1024);
-        zclApp_Sensors.Temperature = (int16)bme_results.temperature;
+        zclApp_Sensors.BME280_Temperature_Sensor_MeasuredValue = (int16)bme_results.temperature + zclApp_Config.TemperatureOffset;
+        zclApp_Sensors.BME280_PressureSensor_MeasuredValueHPA = bme_results.pressure + zclApp_Config.PressureOffset;
+        zclApp_Sensors.BME280_PressureSensor_MeasuredValue = bme_results.pressure / 100 + zclApp_Config.PressureOffset / 100;
+        zclApp_Sensors.BME280_HumiditySensor_MeasuredValue = (uint16)(bme_results.humidity * 100 / 1024) + zclApp_Config.HumidityOffset;
+        zclApp_Sensors.Temperature = (int16)bme_results.temperature + zclApp_Config.TemperatureOffset;
     } else {
         LREP("ReadBME280 bme280_get_sensor_data error %d\r\n", rslt);
     }

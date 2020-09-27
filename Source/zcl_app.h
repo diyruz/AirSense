@@ -42,12 +42,17 @@ extern "C" {
 
 
 // Carbon Dioxide (CO2)
-#define ATTRID_CO2_MEASURED_VALUE 0x0000
-#define ATTRID_CO2_TOLERANCE 0x0003
-#define ATTRID_ENABLE_ABC 0x0202
-#define ATTRID_LED_FEEDBACK 0x0203
-#define ATTRID_THRESHOLD1_PPM 0x0204
-#define ATTRID_THRESHOLD2_PPM 0x0205
+#define ATTRID_CO2_MEASURED_VALUE   0x0000
+#define ATTRID_CO2_TOLERANCE        0x0003
+#define ATTRID_ENABLE_ABC           0x0202
+#define ATTRID_LED_FEEDBACK         0x0203
+#define ATTRID_THRESHOLD1_PPM       0x0204
+#define ATTRID_THRESHOLD2_PPM       0x0205
+
+#define ATTRID_TemperatureOffset    0x0210
+#define ATTRID_PressureOffset       0x0210
+#define ATTRID_HumidityOffset       0x0210
+
 
 #define ATTRID_MS_PRESSURE_MEASUREMENT_MEASURED_VALUE_HPA               0x0200
 
@@ -67,6 +72,10 @@ typedef struct {
     uint8 EnableABC;
     uint16 Threshold1_PPM;
     uint16 Threshold2_PPM;
+    int16 TemperatureOffset;
+    uint32 PressureOffset;
+    int16 HumidityOffset;
+
 } application_config_t;
 
 typedef struct {
