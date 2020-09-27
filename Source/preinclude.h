@@ -45,9 +45,9 @@
     #define HAL_UART_DMA 1
     #define HAL_UART_ISR 0
     #if defined(RTR_NWK)
-        #define INT_HEAP_LEN 2377
+        #define INT_HEAP_LEN 2373
     #else
-        #define INT_HEAP_LEN 2839
+        #define INT_HEAP_LEN 2835
     #endif
 #elif defined(HAL_BOARD_CHDTECH_DEV)
     #define SENSEAIR_UART_PORT 0x01
