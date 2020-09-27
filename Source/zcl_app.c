@@ -233,7 +233,7 @@ static void zclApp_ReadSensors(void) {
         bdb_RepChangedAttrValue(zclApp_FirstEP.EndPoint, TEMP, ATTRID_MS_TEMPERATURE_MEASURED_VALUE);
         bdb_RepChangedAttrValue(zclApp_FirstEP.EndPoint, PRESSURE, ATTRID_MS_PRESSURE_MEASUREMENT_MEASURED_VALUE);
         bdb_RepChangedAttrValue(zclApp_FirstEP.EndPoint, HUMIDITY, ATTRID_MS_RELATIVE_HUMIDITY_MEASURED_VALUE);
-
+        bdb_RepChangedAttrValue(zclApp_FirstEP.EndPoint, CO2, ATTRID_CO2_MEASURED_VALUE);
         currentSensorsReadingPhase = 0;
         zclApp_LedFeedback();
         break;

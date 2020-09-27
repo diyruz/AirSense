@@ -37,9 +37,13 @@ extern "C" {
 #define HUMIDITY    ZCL_CLUSTER_ID_MS_RELATIVE_HUMIDITY
 #define PRESSURE    ZCL_CLUSTER_ID_MS_PRESSURE_MEASUREMENT
 
+//Carbon Dioxide (CO2)
+#define CO2     0x040d
+
+
 // Carbon Dioxide (CO2)
-#define ATTRID_MS_TEMPERATURE_MEASUREMENT_CO2_LEVEL_MEASURED_VALUE 0x0200
-#define ATTRID_CO2_TOLERANCE 0x0201
+#define ATTRID_CO2_MEASURED_VALUE 0x0000
+#define ATTRID_CO2_TOLERANCE 0x0003
 #define ATTRID_ENABLE_ABC 0x0202
 #define ATTRID_LED_FEEDBACK 0x0203
 #define ATTRID_THRESHOLD1_PPM 0x0204
@@ -58,7 +62,7 @@ extern "C" {
  */
 
 typedef struct {
-    uint16 SensorTolerance;
+    float SensorTolerance;
     uint8 LedFeedback;
     uint8 EnableABC;
     uint16 Threshold1_PPM;
@@ -66,7 +70,7 @@ typedef struct {
 } application_config_t;
 
 typedef struct {
-    uint16 CO2_PPM;
+    float CO2_PPM;
     int16 Temperature;
     int16 BME280_Temperature_Sensor_MeasuredValue;
     int16 BME280_PressureSensor_MeasuredValue;

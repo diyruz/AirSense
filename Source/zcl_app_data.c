@@ -100,12 +100,12 @@ CONST zclAttrRec_t zclApp_AttrsFirstEP[] = {
     {PRESSURE, {ATTRID_MS_PRESSURE_MEASUREMENT_MEASURED_VALUE_HPA, ZCL_UINT32, RR, (void *)&zclApp_Sensors.BME280_PressureSensor_MeasuredValueHPA}},
     {HUMIDITY, {ATTRID_MS_RELATIVE_HUMIDITY_MEASURED_VALUE, ZCL_UINT16, RR, (void *)&zclApp_Sensors.BME280_HumiditySensor_MeasuredValue}},
 
-    {TEMP, {ATTRID_MS_TEMPERATURE_MEASUREMENT_CO2_LEVEL_MEASURED_VALUE, ZCL_UINT16, RR, (void *)&zclApp_Sensors.CO2_PPM}},
-    {TEMP, {ATTRID_CO2_TOLERANCE, ZCL_UINT8, RW, (void *)&zclApp_Config.SensorTolerance}},
-    {TEMP, {ATTRID_ENABLE_ABC, ZCL_DATATYPE_BOOLEAN, RW, (void *)&zclApp_Config.EnableABC}},
-    {TEMP, {ATTRID_LED_FEEDBACK, ZCL_DATATYPE_BOOLEAN, RW, (void *)&zclApp_Config.LedFeedback}},
-    {TEMP, {ATTRID_THRESHOLD1_PPM, ZCL_UINT16, RW, (void *)&zclApp_Config.Threshold1_PPM}},
-    {TEMP, {ATTRID_THRESHOLD2_PPM, ZCL_UINT16, RW, (void *)&zclApp_Config.Threshold2_PPM}}
+    {CO2, {ATTRID_CO2_MEASURED_VALUE, ZCL_SINGLE, RR, (void *)&zclApp_Sensors.CO2_PPM}},
+    {CO2, {ATTRID_CO2_TOLERANCE, ZCL_SINGLE, RW, (void *)&zclApp_Config.SensorTolerance}},
+    {CO2, {ATTRID_ENABLE_ABC, ZCL_DATATYPE_BOOLEAN, RW, (void *)&zclApp_Config.EnableABC}},
+    {CO2, {ATTRID_LED_FEEDBACK, ZCL_DATATYPE_BOOLEAN, RW, (void *)&zclApp_Config.LedFeedback}},
+    {CO2, {ATTRID_THRESHOLD1_PPM, ZCL_UINT16, RW, (void *)&zclApp_Config.Threshold1_PPM}},
+    {CO2, {ATTRID_THRESHOLD2_PPM, ZCL_UINT16, RW, (void *)&zclApp_Config.Threshold2_PPM}}
 };
 
 

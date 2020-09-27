@@ -4,14 +4,7 @@ const {
 } = require('zigbee-herdsman-converters');
 
 const ATTRID_MS_PRESSURE_MEASUREMENT_MEASURED_VALUE_HPA = 0x0200; // non standart attribute, max precision
-const ATTRID_MS_TEMPERATURE_MEASUREMENT_CO2_LEVEL_MEASURED_VALUE = 0x0200; //custom attribute for co2 readings
-const ZCL_DATATYPE_UINT16 = 0x21;
 const ZCL_DATATYPE_UINT32 = 0x23;
-
-
-
-
-const CO2_LEVEL_KEY = ATTRID_MS_TEMPERATURE_MEASUREMENT_CO2_LEVEL_MEASURED_VALUE.toString();
 const EXT_PRESSURE_KEY = ATTRID_MS_PRESSURE_MEASUREMENT_MEASURED_VALUE_HPA.toString();
 
 const bind = async (endpoint, target, clusters) => {
@@ -22,14 +15,12 @@ const bind = async (endpoint, target, clusters) => {
 
 const fz = {
     co2: {
-        cluster: 'msTemperatureMeasurement',
+        cluster: 'msCO2',
         type: ['attributeReport', 'readResponse'],
         convert: (model, msg, publish, options, meta) => {
-            if (msg.data[CO2_LEVEL_KEY]) {
-                return {
-                    co2: msg.data[CO2_LEVEL_KEY]
-                };
-            }
+            return {
+                co2: msg.data.measuredValue
+            };
         },
     },
     extended_pressure: {
@@ -113,7 +104,8 @@ const device = {
         await bind(firstEndpoint, coordinatorEndpoint, [
             'msTemperatureMeasurement',
             'msRelativeHumidity',
-            'msPressureMeasurement'
+            'msPressureMeasurement',
+            'msCO2'
         ]);
 
         const msBindPayload = [{
@@ -123,20 +115,8 @@ const device = {
             reportableChange: 0,
         }];
 
-        const co2ReportingPayload = [
-            ...msBindPayload,
-            {
-                attribute: {
-                    ID: ATTRID_MS_TEMPERATURE_MEASUREMENT_CO2_LEVEL_MEASURED_VALUE,
-                    type: ZCL_DATATYPE_UINT16,
-                },
-                minimumReportInterval: 0,
-                maximumReportInterval: 3600,
-                reportableChange: 0,
-            },
-        ];
-        await firstEndpoint.configureReporting('msTemperatureMeasurement', co2ReportingPayload);
-
+        await firstEndpoint.configureReporting('msCO2', msBindPayload);
+        await firstEndpoint.configureReporting('msTemperatureMeasurement', msBindPayload);
         await firstEndpoint.configureReporting('msRelativeHumidity', msBindPayload);
 
         const pressureBindPayload = [
