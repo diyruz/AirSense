@@ -3730,7 +3730,7 @@
                     <name>CCDefines</name>
                     <state>HAL_BOARD_TARGET</state>
                     <state>HAL_PA_LNA_CC2592</state>
-                    <state>APP_TX_POWER=19</state>
+                    <state>APP_TX_POWER=TX_PWR_PLUS_19</state>
                 </option>
                 <option>
                     <name>CCPreprocFile</name>
@@ -4873,7 +4873,7 @@
                     <name>CCDefines</name>
                     <state>HAL_BOARD_TARGET</state>
                     <state>HAL_PA_LNA_CC2592</state>
-                    <state>APP_TX_POWER=19</state>
+                    <state>APP_TX_POWER=TX_PWR_PLUS_19</state>
                 </option>
                 <option>
                     <name>CCPreprocFile</name>
