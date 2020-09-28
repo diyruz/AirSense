@@ -278,7 +278,9 @@ static void zclApp_DetectSensorType(void) {
     }
 }
 static void zclApp_ReadSensors(void) {
-    HalLedSet(HAL_LED_1, HAL_LED_MODE_BLINK);
+    if (zclApp_Config.LedFeedback) {
+        HalLedSet(HAL_LED_1, HAL_LED_MODE_BLINK);
+    }
     static uint8 currentSensorsReadingPhase = 0;
     LREP("currentSensorsReadingPhase %d\r\n", currentSensorsReadingPhase);
     /**
