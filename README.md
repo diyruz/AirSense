@@ -9,4 +9,4 @@
 # How to add device into zigbe2mqtt
 Use [external converters](https://www.zigbee2mqtt.io/information/configuration.html#external-converters-configuration) feature
 
-Converter file located [here](./z2m-converter/DIYRuZ_AirSense.js)
+Converter file located [here](./converters/DIYRuZ_AirSense.js)
