@@ -61,6 +61,7 @@ extern "C" {
 #define ZCL_UINT8 ZCL_DATATYPE_UINT8
 #define ZCL_UINT16 ZCL_DATATYPE_UINT16
 #define ZCL_INT16 ZCL_DATATYPE_INT16
+#define ZCL_INT32 ZCL_DATATYPE_INT32
 #define ZCL_UINT32 ZCL_DATATYPE_UINT32
 #define ZCL_SINGLE ZCL_DATATYPE_SINGLE_PREC
 /*********************************************************************
@@ -74,7 +75,7 @@ typedef struct {
     uint16 Threshold1_PPM;
     uint16 Threshold2_PPM;
     int16 TemperatureOffset;
-    uint32 PressureOffset;
+    int32 PressureOffset;
     int16 HumidityOffset;
 
 } application_config_t;
