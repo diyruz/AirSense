@@ -44,7 +44,7 @@ const uint16 zclApp_clusterRevision_all = 0x0002;
 // Basic Cluster
 const uint8 zclApp_HWRevision = APP_HWVERSION;
 const uint8 zclApp_ZCLVersion = APP_ZCLVERSION;
-const uint8 zclApp_ApplicationVersion = 2;
+const uint8 zclApp_ApplicationVersion = 3;
 const uint8 zclApp_StackVersion = 4;
 
 //{lenght, 'd', 'a', 't', 'a'}
