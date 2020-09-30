@@ -306,11 +306,10 @@ static void zclApp_ReadSensors(void) {
     case 1:
         switch (sensorType) {
         case SENSEAIR:
-            zclApp_Sensors.CO2_PPM = SenseAir_Read();
+            zclApp_Sensors.CO2_PPM = SenseAir_Read() / 1000000.0;
             break;
         case MHZ19:
-            zclApp_Sensors.CO2_PPM = MHZ19_Read();
-
+            zclApp_Sensors.CO2_PPM = MHZ19_Read() / 1000000.0;
             break;
 
         default:
@@ -319,11 +318,11 @@ static void zclApp_ReadSensors(void) {
         }
         break;
     case 2:
-        zclApp_Sensors.Temperature = readTemperature();
-        if (zclApp_Sensors.Temperature == 1) {
+        int16 temp = readTemperature();
+        if (temp == 1) {
             LREPMaster("ReadDS18B20 error\r\n");
         } else {
-            zclApp_Sensors.Temperature += zclApp_Config.TemperatureOffset;
+            zclApp_Sensors.Temperature = temp + zclApp_Config.TemperatureOffset;
             LREP("ReadDS18B20 t=%d offset=\r\n", zclApp_Sensors.Temperature, zclApp_Config.TemperatureOffset);
         }
         break;

@@ -14,15 +14,6 @@ const bind = async (endpoint, target, clusters) => {
 };
 
 const fz = {
-    co2: {
-        cluster: 'msCO2',
-        type: ['attributeReport', 'readResponse'],
-        convert: (model, msg, publish, options, meta) => {
-            return {
-                co2: msg.data.measuredValue
-            };
-        },
-    },
     extended_pressure: {
         cluster: 'msPressureMeasurement',
         type: ['attributeReport', 'readResponse'],
@@ -89,8 +80,8 @@ const device = {
     fromZigbee: [
         fromZigbeeConverters.temperature,
         fromZigbeeConverters.humidity,
+        fromZigbeeConverters.co2
         fz.extended_pressure,
-        fz.co2
     ],
     toZigbee: [
         toZigbeeConverters.factory_reset,
