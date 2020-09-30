@@ -287,7 +287,7 @@ static void zclApp_ReadSensors(void) {
      * FYI: split reading sensors into phases, so single call wouldn't block processor
      * for extensive ammount of time
      * */
-
+    int16 temp;
     switch (currentSensorsReadingPhase++) {
     case 0:
         switch (sensorType) {
@@ -318,7 +318,7 @@ static void zclApp_ReadSensors(void) {
         }
         break;
     case 2:
-        int16 temp = readTemperature();
+        temp = readTemperature();
         if (temp == 1) {
             LREPMaster("ReadDS18B20 error\r\n");
         } else {
