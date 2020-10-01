@@ -80,7 +80,7 @@ const device = {
     fromZigbee: [
         fromZigbeeConverters.temperature,
         fromZigbeeConverters.humidity,
-        fromZigbeeConverters.co2
+        fromZigbeeConverters.co2,
         fz.extended_pressure,
     ],
     toZigbee: [
