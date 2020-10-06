@@ -306,10 +306,12 @@ static void zclApp_ReadSensors(void) {
     case 1:
         switch (sensorType) {
         case SENSEAIR:
-            zclApp_Sensors.CO2_PPM = SenseAir_Read() / 1000000.0;
+            zclApp_Sensors.CO2_PPM = SenseAir_Read();
+            zclApp_Sensors.CO2 = (float) ((double) zclApp_Sensors.CO2_PPM / 1000000.0);
             break;
         case MHZ19:
-            zclApp_Sensors.CO2_PPM = MHZ19_Read() / 1000000.0;
+            zclApp_Sensors.CO2_PPM = MHZ19_Read();
+            zclApp_Sensors.CO2 = (float) ((double) zclApp_Sensors.CO2_PPM / 1000000.0);
             break;
 
         default:
@@ -342,7 +344,7 @@ static void zclApp_ReadSensors(void) {
         bdb_RepChangedAttrValue(zclApp_FirstEP.EndPoint, TEMP, ATTRID_MS_TEMPERATURE_MEASURED_VALUE);
         bdb_RepChangedAttrValue(zclApp_FirstEP.EndPoint, PRESSURE, ATTRID_MS_PRESSURE_MEASUREMENT_MEASURED_VALUE);
         bdb_RepChangedAttrValue(zclApp_FirstEP.EndPoint, HUMIDITY, ATTRID_MS_RELATIVE_HUMIDITY_MEASURED_VALUE);
-        bdb_RepChangedAttrValue(zclApp_FirstEP.EndPoint, CO2, ATTRID_CO2_MEASURED_VALUE);
+        bdb_RepChangedAttrValue(zclApp_FirstEP.EndPoint, ZCL_CO2, ATTRID_CO2_MEASURED_VALUE);
         currentSensorsReadingPhase = 0;
         zclApp_LedFeedback();
         break;
