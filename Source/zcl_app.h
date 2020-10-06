@@ -61,6 +61,7 @@ extern "C" {
 #define ZCL_UINT8 ZCL_DATATYPE_UINT8
 #define ZCL_UINT16 ZCL_DATATYPE_UINT16
 #define ZCL_INT16 ZCL_DATATYPE_INT16
+#define ZCL_INT8  ZCL_DATATYPE_INT8
 #define ZCL_INT32 ZCL_DATATYPE_INT32
 #define ZCL_UINT32 ZCL_DATATYPE_UINT32
 #define ZCL_SINGLE ZCL_DATATYPE_SINGLE_PREC
@@ -85,7 +86,8 @@ typedef struct {
     int16 Temperature;
     int16 BME280_Temperature_Sensor_MeasuredValue;
     int16 BME280_PressureSensor_MeasuredValue;
-    uint32 BME280_PressureSensor_MeasuredValueHPA;
+    int16 BME280_PressureSensor_ScaledValue;
+    int8 BME280_PressureSensor_Scale;
     uint16 BME280_HumiditySensor_MeasuredValue;
 } sensors_state_t;
 
