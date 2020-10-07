@@ -1,6 +1,7 @@
 const {
     fromZigbeeConverters,
     toZigbeeConverters,
+    exposes
 } = require('zigbee-herdsman-converters');
 
 const bind = async (endpoint, target, clusters) => {
@@ -9,8 +10,6 @@ const bind = async (endpoint, target, clusters) => {
     }
 };
 
-const fz = {
-};
 
 const hass = {
     co2: {
@@ -50,6 +49,58 @@ const hass = {
         },
     }
 };
+const deviceOptions = [{
+    cluster: 'msCO2',
+    attrId: 0x0203,
+    type: 0x10,
+    key: 'led_feedback',
+}];
+const generateConfigConverter = (cluster) => ({
+    cluster,
+    type: 'readResponse',
+    convert: (model, msg, publish, options, meta) => {
+        const result = {};
+        deviceOptions.forEach(({
+            key,
+            attrId,
+            type
+        }) => {
+            if (attrId.toString() in msg.data) {
+                result[key] = msg.data[attrId.toString()];
+            }
+        });
+        return result;
+    }
+});
+const convertValue = (rawValue) => {
+    const lookup = {
+        'OFF': 0x00,
+        'ON': 0x01,
+    };
+    return lookup.hasOwnProperty(rawValue) ? lookup[rawValue] : parseInt(rawValue, 10);
+}
+const tz = {
+    config: {
+        key: deviceOptions.map(({
+            key
+        }) => key),
+        convertSet: async (entity, key, rawValue, meta) => {
+            const { cluster, attrId, type } = deviceOptions.find(({key: _optionKey}) => key === _optionKey);
+
+            await entity.write(cluster, {
+                [attrId]: {
+                    value: convertValue(rawValue),
+                    type
+                }
+            });
+            return {state: { [key]: rawValue}};
+        },
+        convertGet: async (entity, key, meta) => {
+            const { cluster, attrId } = deviceOptions.find(({key: _optionKey}) => key === _optionKey);
+            await entity.read(cluster, [attrId]);
+        },
+    }
+}
 
 const device = {
     zigbeeModel: ['DIYRuZ_AirSense'],
@@ -63,9 +114,11 @@ const device = {
         fromZigbeeConverters.humidity,
         fromZigbeeConverters.co2,
         fromZigbeeConverters.pressure,
+        ...[...new Set(deviceOptions)].map(({cluster}) => generateConfigConverter(cluster))
     ],
     toZigbee: [
         toZigbeeConverters.factory_reset,
+        tz.config
     ],
     meta: {
         configureKey: 1,
@@ -91,16 +144,21 @@ const device = {
         await firstEndpoint.configureReporting('msTemperatureMeasurement', msBindPayload);
         await firstEndpoint.configureReporting('msRelativeHumidity', msBindPayload);
 
-        const pressureBindPayload = [
-            {
-                attribute: 'scaledValue',
-                minimumReportInterval: 0,
-                maximumReportInterval: 3600,
-                reportableChange: 0,
-            }
-        ];
+        const pressureBindPayload = [{
+            attribute: 'scaledValue',
+            minimumReportInterval: 0,
+            maximumReportInterval: 3600,
+            reportableChange: 0,
+        }];
         await firstEndpoint.configureReporting('msPressureMeasurement', pressureBindPayload);
     },
+    exposes: [
+        exposes.numeric('co2').withUnit('ppm'),
+        exposes.numeric('temperature').withUnit('°C'),
+        exposes.numeric('humidity').withUnit('%'),
+        exposes.numeric('pressure').withUnit('hPa'),
+        exposes.switch('led_feedback'),
+    ],
 };
 
 module.exports = device;
