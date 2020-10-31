@@ -3,7 +3,10 @@ const {
     toZigbeeConverters,
     exposes
 } = require('zigbee-herdsman-converters');
-
+const ZCL_DATATYPE_INT16 = 0x29;
+const ZCL_DATATYPE_UINT16 = 0x21;
+const ZCL_DATATYPE_BOOLEAN = 0x10;
+const ZCL_DATATYPE_INT32 = 0x2b;
 const bind = async (endpoint, target, clusters) => {
     for (const cluster of clusters) {
         await endpoint.bind(cluster, target);
@@ -50,15 +53,55 @@ const hass = {
     }
 };
 const deviceOptions = [{
-    cluster: 'msCO2',
-    attrId: 0x0203,
-    type: 0x10,
-    key: 'led_feedback',
-}];
+        cluster: 'msCO2',
+        attrId: 0x0203,
+        type: ZCL_DATATYPE_BOOLEAN,
+        key: 'led_feedback',
+    },
+    {
+        cluster: 'msCO2',
+        attrId: 0x0202,
+        type: ZCL_DATATYPE_BOOLEAN,
+        key: 'enable_abc',
+    },
+    {
+        cluster: 'msCO2',
+        attrId: 0x0204,
+        type: ZCL_DATATYPE_UINT16,
+        key: 'threshold1',
+    },
+    {
+        cluster: 'msCO2',
+        attrId: 0x0205,
+        type: ZCL_DATATYPE_UINT16,
+        key: 'threshold2',
+    },
+    {
+        cluster: 'msTemperatureMeasurement',
+        attrId: 0x0210,
+        type: ZCL_DATATYPE_INT16,
+        key: 'temperature_offset',
+    },
+    {
+        cluster: 'msPressureMeasurement',
+        attrId: 0x0210,
+        type: ZCL_DATATYPE_INT32,
+        key: 'pressure_offset',
+    },
+    {
+        cluster: 'msRelativeHumidity',
+        attrId: 0x0210,
+        type: ZCL_DATATYPE_INT16,
+        key: 'humidity_offset',
+    },
+
+];
+const BOOL_MAP = ['OFF', 'ON'];
 const generateConfigConverter = (cluster) => ({
     cluster,
     type: 'readResponse',
     convert: (model, msg, publish, options, meta) => {
+        console.log(msg.data);
         const result = {};
         deviceOptions.forEach(({
             key,
@@ -66,7 +109,11 @@ const generateConfigConverter = (cluster) => ({
             type
         }) => {
             if (attrId.toString() in msg.data) {
-                result[key] = msg.data[attrId.toString()];
+                if (type === ZCL_DATATYPE_BOOLEAN) {
+                    result[key] = BOOL_MAP[msg.data[attrId.toString()]];
+                } else {
+                    result[key] = msg.data[attrId.toString()];
+                }
             }
         });
         return result;
@@ -85,7 +132,13 @@ const tz = {
             key
         }) => key),
         convertSet: async (entity, key, rawValue, meta) => {
-            const { cluster, attrId, type } = deviceOptions.find(({key: _optionKey}) => key === _optionKey);
+            const {
+                cluster,
+                attrId,
+                type
+            } = deviceOptions.find(({
+                key: _optionKey
+            }) => key === _optionKey);
 
             await entity.write(cluster, {
                 [attrId]: {
@@ -93,10 +146,19 @@ const tz = {
                     type
                 }
             });
-            return {state: { [key]: rawValue}};
+            return {
+                state: {
+                    [key]: rawValue
+                }
+            };
         },
         convertGet: async (entity, key, meta) => {
-            const { cluster, attrId } = deviceOptions.find(({key: _optionKey}) => key === _optionKey);
+            const {
+                cluster,
+                attrId
+            } = deviceOptions.find(({
+                key: _optionKey
+            }) => key === _optionKey);
             await entity.read(cluster, [attrId]);
         },
     }
@@ -114,7 +176,9 @@ const device = {
         fromZigbeeConverters.humidity,
         fromZigbeeConverters.co2,
         fromZigbeeConverters.pressure,
-        ...[...new Set(deviceOptions)].map(({cluster}) => generateConfigConverter(cluster))
+        ...[...new Set(deviceOptions)].map(({
+            cluster
+        }) => generateConfigConverter(cluster))
     ],
     toZigbee: [
         toZigbeeConverters.factory_reset,
@@ -153,11 +217,22 @@ const device = {
         await firstEndpoint.configureReporting('msPressureMeasurement', pressureBindPayload);
     },
     exposes: [
-        exposes.numeric('co2').withUnit('ppm'),
-        exposes.numeric('temperature').withUnit('°C'),
-        exposes.numeric('humidity').withUnit('%'),
-        exposes.numeric('pressure').withUnit('hPa'),
-        exposes.switch('led_feedback'),
+        exposes.numeric('co2', 'r').withUnit('ppm'),
+        exposes.numeric('temperature', 'r').withUnit('°C'),
+        exposes.numeric('humidity', 'r').withUnit('%'),
+        exposes.numeric('pressure', 'r').withUnit('hPa'),
+
+
+        //device options
+        exposes.binary('led_feedback', 'rw', 'ON', 'OFF'),
+        exposes.binary('enable_abc', 'rw', 'ON', 'OFF'),
+        // led lights thresholds
+        exposes.numeric('threshold1', 'rw').withUnit('ppm'),
+        exposes.numeric('threshold2', 'rw').withUnit('ppm'),
+        //fake BME280 workarounds
+        exposes.numeric('temperature_offset', 'rw').withUnit('°C'),
+        exposes.numeric('pressure_offset', 'rw').withUnit('hPa'),
+        exposes.numeric('humidity_offset', 'rw').withUnit('%')
     ],
 };
 
