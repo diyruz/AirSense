@@ -44,7 +44,7 @@
     #define CO2_UART_PORT 0x00
     #define HAL_UART_DMA 1
     #define HAL_UART_ISR 0
-    #define INT_HEAP_LEN 2300
+    #define INT_HEAP_LEN 2256
 #elif defined(HAL_BOARD_CHDTECH_DEV)
     #define HAL_UART_DMA 1
     #define HAL_UART_ISR 2
