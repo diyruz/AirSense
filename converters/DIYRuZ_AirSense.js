@@ -217,22 +217,22 @@ const device = {
         await firstEndpoint.configureReporting('msPressureMeasurement', pressureBindPayload);
     },
     exposes: [
-        exposes.numeric('co2', 'r').withUnit('ppm'),
-        exposes.numeric('temperature', 'r').withUnit('°C'),
-        exposes.numeric('humidity', 'r').withUnit('%'),
-        exposes.numeric('pressure', 'r').withUnit('hPa'),
+        exposes.numeric('co2', 1).withUnit('ppm'),
+        exposes.numeric('temperature', 1).withUnit('°C'),
+        exposes.numeric('humidity', 1).withUnit('%'),
+        exposes.numeric('pressure', 1).withUnit('hPa'),
 
 
         //device options
-        exposes.binary('led_feedback', 'rw', 'ON', 'OFF'),
-        exposes.binary('enable_abc', 'rw', 'ON', 'OFF'),
+        exposes.binary('led_feedback', 2, 'ON', 'OFF'),
+        exposes.binary('enable_abc', 2, 'ON', 'OFF'),
         // led lights thresholds
-        exposes.numeric('threshold1', 'rw').withUnit('ppm'),
-        exposes.numeric('threshold2', 'rw').withUnit('ppm'),
+        exposes.numeric('threshold1', 2).withUnit('ppm'),
+        exposes.numeric('threshold2', 2).withUnit('ppm'),
         //fake BME280 workarounds
-        exposes.numeric('temperature_offset', 'rw').withUnit('°C'),
-        exposes.numeric('pressure_offset', 'rw').withUnit('hPa'),
-        exposes.numeric('humidity_offset', 'rw').withUnit('%')
+        exposes.numeric('temperature_offset', 2).withUnit('°C'),
+        exposes.numeric('pressure_offset', 2).withUnit('hPa'),
+        exposes.numeric('humidity_offset', 2).withUnit('%')
     ],
 };
 
