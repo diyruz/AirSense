@@ -13,6 +13,7 @@ const bind = async (endpoint, target, clusters) => {
     }
 };
 
+const ACCESS_STATE = 0b001, ACCESS_WRITE = 0b010, ACCESS_READ = 0b100;
 
 const hass = {
     co2: {
@@ -217,22 +218,22 @@ const device = {
         await firstEndpoint.configureReporting('msPressureMeasurement', pressureBindPayload);
     },
     exposes: [
-        exposes.numeric('co2', 0b001).withUnit('ppm'),
-        exposes.numeric('temperature', 0b001).withUnit('°C'),
-        exposes.numeric('humidity', 0b001).withUnit('%'),
-        exposes.numeric('pressure', 0b001).withUnit('hPa'),
+        exposes.numeric('co2', ACCESS_STATE).withUnit('ppm'),
+        exposes.numeric('temperature', ACCESS_STATE).withUnit('°C'),
+        exposes.numeric('humidity', ACCESS_STATE).withUnit('%'),
+        exposes.numeric('pressure', ACCESS_STATE).withUnit('hPa'),
 
 
         //device options
-        exposes.binary('led_feedback', 0b111, 'ON', 'OFF'),
-        exposes.binary('enable_abc', 0b111, 'ON', 'OFF'),
+        exposes.binary('led_feedback', ACCESS_STATE | ACCESS_WRITE | ACCESS_READ, 'ON', 'OFF'),
+        exposes.binary('enable_abc', ACCESS_STATE | ACCESS_WRITE | ACCESS_READ, 'ON', 'OFF'),
         // led lights thresholds
-        exposes.numeric('threshold1', 0b111).withUnit('ppm'),
-        exposes.numeric('threshold2', 0b111).withUnit('ppm'),
+        exposes.numeric('threshold1', ACCESS_STATE | ACCESS_WRITE | ACCESS_READ).withUnit('ppm'),
+        exposes.numeric('threshold2', ACCESS_STATE | ACCESS_WRITE | ACCESS_READ).withUnit('ppm'),
         //fake BME280 workarounds
-        exposes.numeric('temperature_offset', 0b111).withUnit('°C'),
-        exposes.numeric('pressure_offset', 0b111).withUnit('hPa'),
-        exposes.numeric('humidity_offset', 0b111).withUnit('%')
+        exposes.numeric('temperature_offset', ACCESS_STATE | ACCESS_WRITE | ACCESS_READ).withUnit('°C'),
+        exposes.numeric('pressure_offset', ACCESS_STATE | ACCESS_WRITE | ACCESS_READ).withUnit('hPa'),
+        exposes.numeric('humidity_offset', ACCESS_STATE | ACCESS_WRITE | ACCESS_READ).withUnit('%')
     ],
 };
 
