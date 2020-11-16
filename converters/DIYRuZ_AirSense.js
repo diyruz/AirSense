@@ -1,5 +1,3 @@
-module.paths.push(require.main.path+ '/node_modules') //sovle Cannot find module 'zigbee-herdsman-converters'
-
 const {
     fromZigbeeConverters,
     toZigbeeConverters,
