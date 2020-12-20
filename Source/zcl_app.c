@@ -145,7 +145,7 @@ static void zclApp_InitCO2Uart(void) {
     halUARTConfig.callBackFunc = NULL;
     HalUARTInit();
     if (HalUARTOpen(CO2_UART_PORT, &halUARTConfig) == HAL_UART_SUCCESS) {
-        LREPMaster("Initialized sensair \r\n");
+        LREPMaster("Initialized CO2 UART \r\n");
     }
 }
 
@@ -228,7 +228,7 @@ static void zclApp_InitSensors(void) {
         LREPMaster("Sensor type UNKNOWN\r\n");
         break;
     }
-
+    osal_pwrmgr_task_state(zclApp_TaskID, PWRMGR_CONSERVE);
 }
 
 static void zclApp_StopSensorDetection(void) {
@@ -238,6 +238,7 @@ static void zclApp_StopSensorDetection(void) {
 static void zclApp_DetectSensorType(void) {
     static uint8 currentSensorsReadingPhase = 0;
     uint16 result = 0;
+    osal_pwrmgr_task_state(zclApp_TaskID, PWRMGR_HOLD);
     if (sensorType == UNKNOWN) {
         switch (currentSensorsReadingPhase++) {
         case 0:
@@ -288,6 +289,7 @@ static void zclApp_ReadSensors(void) {
     int16 temp;
     switch (currentSensorsReadingPhase++) {
     case 0:
+        osal_pwrmgr_task_state(zclApp_TaskID, PWRMGR_HOLD);
         switch (sensorType) {
         case SENSEAIR:
             SenseAir_RequestMeasure();
@@ -332,6 +334,7 @@ static void zclApp_ReadSensors(void) {
 
     case 4:
         zclApp_ReadBME280(&bme_dev);
+        osal_pwrmgr_task_state(zclApp_TaskID, PWRMGR_CONSERVE);
         break;
 
     default:

@@ -1447,6 +1447,7 @@
                 <option>
                     <name>CCDefines</name>
                     <state>HAL_BOARD_TARGET</state>
+                    <state>POWER_SAVING</state>
                 </option>
                 <option>
                     <name>CCPreprocFile</name>
@@ -3731,6 +3732,7 @@
                     <state>HAL_BOARD_TARGET</state>
                     <state>HAL_PA_LNA_CC2592</state>
                     <state>APP_TX_POWER=19</state>
+                    <state>POWER_SAVING</state>
                 </option>
                 <option>
                     <name>CCPreprocFile</name>
@@ -6017,6 +6019,7 @@
                     <state>HAL_BOARD_TARGET</state>
                     <state>HAL_PA_LNA</state>
                     <state>APP_TX_POWER=19</state>
+                    <state>POWER_SAVING</state>
                 </option>
                 <option>
                     <name>CCPreprocFile</name>
