@@ -418,7 +418,7 @@ static void zclApp_ReadBME280(struct bme280_dev *dev) {
     if (rslt == BME280_OK) {
         LREP("ReadBME280 t=%ld, p=%ld, h=%ld\r\n", bme_results.temperature, bme_results.pressure, bme_results.humidity);
         zclApp_Sensors.BME280_Temperature_Sensor_MeasuredValue = (int16)bme_results.temperature + zclApp_Config.TemperatureOffset;
-        zclApp_Sensors.BME280_PressureSensor_ScaledValue = (int16)(pow(10.0, (double)zclApp_Sensors.BME280_PressureSensor_Scale) * (double)bme_results.pressure);
+        zclApp_Sensors.BME280_PressureSensor_ScaledValue = (int16)(pow(10.0, (double)zclApp_Sensors.BME280_PressureSensor_Scale)) * (double)bme_results.pressure;
         zclApp_Sensors.BME280_PressureSensor_MeasuredValue = bme_results.pressure / 100 + zclApp_Config.PressureOffset / 100;
         zclApp_Sensors.BME280_HumiditySensor_MeasuredValue = (uint16)(bme_results.humidity * 100 / 1024) + zclApp_Config.HumidityOffset;
         zclApp_Sensors.Temperature = (int16)bme_results.temperature + zclApp_Config.TemperatureOffset;
