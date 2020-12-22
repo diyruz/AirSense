@@ -246,8 +246,8 @@ static void zclApp_DetectSensorType(void) {
             break;
 
         case 1:
-            result = SenseAir_Read();
-            if (result != 0) {
+            SenseAir_Read(&result);
+            if (result != SENSEAIR_INVALID_RESPONSE) {
                 LREPMaster("Detected SENSEAIR\r\n");
                 sensorType = SENSEAIR;
                 zclApp_StopSensorDetection();
@@ -259,8 +259,8 @@ static void zclApp_DetectSensorType(void) {
             MHZ19_RequestMeasure();
             break;
         case 3:
-            result = MHZ19_Read();
-            if (result != 0) {
+            MHZ19_Read(&result);
+            if (result != MHZ18_INVALID_RESPONSE) {
                 LREPMaster("Detected MHZ19\r\n");
                 sensorType = MHZ19;
                 zclApp_StopSensorDetection();
@@ -287,6 +287,7 @@ static void zclApp_ReadSensors(void) {
      * for extensive ammount of time
      * */
     int16 temp;
+    uint16 co2;
     switch (currentSensorsReadingPhase++) {
     case 0:
         osal_pwrmgr_task_state(zclApp_TaskID, PWRMGR_HOLD);
@@ -306,11 +307,13 @@ static void zclApp_ReadSensors(void) {
     case 1:
         switch (sensorType) {
         case SENSEAIR:
-            zclApp_Sensors.CO2_PPM = SenseAir_Read();
+            SenseAir_Read(&co2);
+            zclApp_Sensors.CO2_PPM = co2;
             zclApp_Sensors.CO2 = (float)((double)zclApp_Sensors.CO2_PPM / 1000000.0);
             break;
         case MHZ19:
-            zclApp_Sensors.CO2_PPM = MHZ19_Read();
+            MHZ19_Read(&co2);
+            zclApp_Sensors.CO2_PPM = co2;
             zclApp_Sensors.CO2 = (float)((double)zclApp_Sensors.CO2_PPM / 1000000.0);
             break;
 
