@@ -79,8 +79,6 @@ sensors_state_t zclApp_Sensors = {
     .Temperature = 0,
     .BME280_Temperature_Sensor_MeasuredValue = 0,
     .BME280_PressureSensor_MeasuredValue = 0,
-    .BME280_PressureSensor_ScaledValue = 0,
-    .BME280_PressureSensor_Scale = -1,
     .BME280_HumiditySensor_MeasuredValue = 0
 };
 
@@ -106,8 +104,6 @@ CONST zclAttrRec_t zclApp_AttrsFirstEP[] = {
 
 
     {PRESSURE, {ATTRID_MS_PRESSURE_MEASUREMENT_MEASURED_VALUE, ZCL_INT16, RR, (void *)&zclApp_Sensors.BME280_PressureSensor_MeasuredValue}},
-    {PRESSURE, {ATTRID_MS_PRESSURE_MEASUREMENT_SCALED_VALUE, ZCL_INT16, RR, (void *)&zclApp_Sensors.BME280_PressureSensor_ScaledValue}},
-    {PRESSURE, {ATTRID_MS_PRESSURE_MEASUREMENT_SCALE, ZCL_INT8, RR, (void *)&zclApp_Sensors.BME280_PressureSensor_Scale}},
     {PRESSURE, {ATTRID_PressureOffset, ZCL_INT32, RW, (void *)&zclApp_Config.PressureOffset}},
 
     {HUMIDITY, {ATTRID_MS_RELATIVE_HUMIDITY_MEASURED_VALUE, ZCL_UINT16, RR, (void *)&zclApp_Sensors.BME280_HumiditySensor_MeasuredValue}},

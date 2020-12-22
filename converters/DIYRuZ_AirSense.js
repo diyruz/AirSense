@@ -169,7 +169,7 @@ const device = {
     zigbeeModel: ['DIYRuZ_AirSense'],
     model: 'DIYRuZ_AirSense',
     vendor: 'DIYRuZ',
-    description: '[Air quality sensor](http://modkam.ru/?p=xxxx)',
+    description: '[Air quality sensor, external converter](http://modkam.ru/?p=xxxx)',
     supports: '',
     homeassistant: [hass.temperature, hass.presure, hass.humidity, hass.co2],
     fromZigbee: [
@@ -208,14 +208,7 @@ const device = {
         await firstEndpoint.configureReporting('msCO2', msBindPayload);
         await firstEndpoint.configureReporting('msTemperatureMeasurement', msBindPayload);
         await firstEndpoint.configureReporting('msRelativeHumidity', msBindPayload);
-
-        const pressureBindPayload = [{
-            attribute: 'scaledValue',
-            minimumReportInterval: 0,
-            maximumReportInterval: 3600,
-            reportableChange: 0,
-        }];
-        await firstEndpoint.configureReporting('msPressureMeasurement', pressureBindPayload);
+        await firstEndpoint.configureReporting('msPressureMeasurement', msBindPayload);
     },
     exposes: [
         exposes.numeric('co2', ACCESS_STATE).withUnit('ppm'),

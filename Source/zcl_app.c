@@ -309,12 +309,12 @@ static void zclApp_ReadSensors(void) {
         case SENSEAIR:
             SenseAir_Read(&co2);
             zclApp_Sensors.CO2_PPM = co2;
-            zclApp_Sensors.CO2 = (float)((double)zclApp_Sensors.CO2_PPM / 1000000.0);
+            zclApp_Sensors.CO2 = (double)co2 / 1000000.0;
             break;
         case MHZ19:
             MHZ19_Read(&co2);
             zclApp_Sensors.CO2_PPM = co2;
-            zclApp_Sensors.CO2 = (float)((double)zclApp_Sensors.CO2_PPM / 1000000.0);
+            zclApp_Sensors.CO2 = (double)co2 / 1000000.0;
             break;
 
         default:
@@ -421,7 +421,6 @@ static void zclApp_ReadBME280(struct bme280_dev *dev) {
     if (rslt == BME280_OK) {
         LREP("ReadBME280 t=%ld, p=%ld, h=%ld\r\n", bme_results.temperature, bme_results.pressure, bme_results.humidity);
         zclApp_Sensors.BME280_Temperature_Sensor_MeasuredValue = (int16)bme_results.temperature + zclApp_Config.TemperatureOffset;
-        zclApp_Sensors.BME280_PressureSensor_ScaledValue = (int16)((pow(10.0, (double)zclApp_Sensors.BME280_PressureSensor_Scale)) * (double)bme_results.pressure);
         zclApp_Sensors.BME280_PressureSensor_MeasuredValue = bme_results.pressure / 100 + zclApp_Config.PressureOffset / 100;
         zclApp_Sensors.BME280_HumiditySensor_MeasuredValue = (uint16)(bme_results.humidity * 100 / 1024) + zclApp_Config.HumidityOffset;
         zclApp_Sensors.Temperature = (int16)bme_results.temperature + zclApp_Config.TemperatureOffset;

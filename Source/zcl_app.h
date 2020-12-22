@@ -86,8 +86,6 @@ typedef struct {
     int16 Temperature;
     int16 BME280_Temperature_Sensor_MeasuredValue;
     int16 BME280_PressureSensor_MeasuredValue;
-    int16 BME280_PressureSensor_ScaledValue;
-    int8 BME280_PressureSensor_Scale;
     uint16 BME280_HumiditySensor_MeasuredValue;
 } sensors_state_t;
 
