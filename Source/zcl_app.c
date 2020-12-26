@@ -308,13 +308,17 @@ static void zclApp_ReadSensors(void) {
         switch (sensorType) {
         case SENSEAIR:
             SenseAir_Read(&co2);
-            zclApp_Sensors.CO2_PPM = co2;
-            zclApp_Sensors.CO2 = (double)co2 / 1000000.0;
+            if (co2 != SENSEAIR_INVALID_RESPONSE) {
+                zclApp_Sensors.CO2_PPM = co2;
+                zclApp_Sensors.CO2 = (double)co2 / 1000000.0;
+            }
             break;
         case MHZ19:
             MHZ19_Read(&co2);
-            zclApp_Sensors.CO2_PPM = co2;
-            zclApp_Sensors.CO2 = (double)co2 / 1000000.0;
+            if (co2 != SENSEAIR_INVALID_RESPONSE) {
+                zclApp_Sensors.CO2_PPM = co2;
+                zclApp_Sensors.CO2 = (double)co2 / 1000000.0;
+            }
             break;
 
         default:
