@@ -89,10 +89,6 @@ typedef struct {
     uint16 BME280_HumiditySensor_MeasuredValue;
 } sensors_state_t;
 
-
-typedef enum {
-  UNKNOWN, SENSEAIR, MHZ19
-} SensorType_t;
 /*********************************************************************
  * VARIABLES
  */
