@@ -65,10 +65,10 @@ void user_delay_ms(uint32_t period) { MicroWait(period * 1000); }
 /*********************************************************************
  * LOCAL VARIABLES
  */
-
-SensorType_t sensorType = UNKNOWN;
-
 struct bme280_dev bme_dev = {.dev_id = BME280_I2C_ADDR_PRIM, .intf = BME280_I2C_INTF, .read = I2C_ReadMultByte, .write = I2C_WriteMultByte, .delay_ms = user_delay_ms};
+
+static zclAirSensor_t const*  air_dev = &sense_air_dev;
+
 /*********************************************************************
  * LOCAL FUNCTIONS
  */
@@ -78,13 +78,11 @@ static void zclApp_RestoreAttributesFromNV(void);
 static void zclApp_SaveAttributesToNV(void);
 static void zclApp_ReadSensors(void);
 static void zclApp_HandleKeys(byte portAndAction, byte keyCode);
-static void zclApp_RequestBME280(struct bme280_dev *dev);
-static void zclApp_ReadBME280(struct bme280_dev *dev);
+static uint8 zclApp_RequestBME280(struct bme280_dev *dev);
+static uint8 zclApp_ReadBME280(struct bme280_dev *dev);
 static void zclApp_InitCO2Uart(void);
 static ZStatus_t zclApp_ReadWriteAuthCB(afAddrType_t *srcAddr, zclAttrRec_t *pAttr, uint8 oper);
-static void zclApp_DetectSensorType(void);
-static void zclApp_StopSensorDetection(void);
-static void zclApp_InitSensors(void);
+static void zclApp_SetupABC(bool force);
 
 /*********************************************************************
  * ZCL General Profile Callback table
@@ -99,6 +97,7 @@ static zclGeneral_AppCallbacks_t zclApp_CmdCallbacks = {
     NULL,                // RSSI Location command
     NULL                 // RSSI Location Response command
 };
+
 void zclApp_Init(byte task_id) {
     HalLedSet(HAL_LED_ALL, HAL_LED_MODE_BLINK);
 
@@ -121,13 +120,14 @@ void zclApp_Init(byte task_id) {
     HalI2CInit();
     osal_start_reload_timer(zclApp_TaskID, APP_REPORT_EVT, APP_REPORT_DELAY);
 }
+
 static void zclApp_HandleKeys(byte portAndAction, byte keyCode) {
     LREP("zclApp_HandleKeys portAndAction=0x%X keyCode=0x%X\r\n", portAndAction, keyCode);
     zclFactoryResetter_HandleKeys(portAndAction, keyCode);
     zclCommissioning_HandleKeys(portAndAction, keyCode);
     if (portAndAction & HAL_KEY_PRESS) {
         LREPMaster("Key press\r\n");
-        osal_start_timerEx(zclApp_TaskID, APP_REPORT_EVT, 200);
+        zclApp_Report();
     }
 }
 
@@ -192,12 +192,6 @@ uint16 zclApp_event_loop(uint8 task_id, uint16 events) {
         zclApp_ReadSensors();
         return (events ^ APP_READ_SENSORS_EVT);
     }
-
-    if (events & APP_DETECT_SENSORS_EVT) {
-        LREPMaster("APP_DETECT_SENSORS_EVT\r\n");
-        zclApp_DetectSensorType();
-        return (events ^ APP_DETECT_SENSORS_EVT);
-    }
     return 0;
 }
 
@@ -215,152 +209,99 @@ static void zclApp_LedFeedback(void) {
     }
 }
 
-static void zclApp_InitSensors(void) {
-    switch (sensorType) {
-    case SENSEAIR:
-        SenseAir_SetABC(zclApp_Config.EnableABC);
-        break;
-    case MHZ19:
-        MHZ19_SetABC(zclApp_Config.EnableABC);
-        break;
-
-    default:
-        LREPMaster("Sensor type UNKNOWN\r\n");
-        break;
-    }
-    osal_pwrmgr_task_state(zclApp_TaskID, PWRMGR_CONSERVE);
+static uint8 current_co2_sensor_state = 0xff;
+static void zclApp_SetupABC(bool force) {
+    if ((current_co2_sensor_state!=0xFF) != zclApp_Config.EnableABC || force)
+    {
+      (*air_dev->SetABC)(zclApp_Config.EnableABC);
+      current_co2_sensor_state = zclApp_Config.EnableABC ? 1 : 0; // write 
+    }    
 }
 
-static void zclApp_StopSensorDetection(void) {
-    osal_stop_timerEx(zclApp_TaskID, APP_DETECT_SENSORS_EVT);
-    osal_clear_event(zclApp_TaskID, APP_DETECT_SENSORS_EVT);
-}
-static void zclApp_DetectSensorType(void) {
-    static uint8 currentSensorsReadingPhase = 0;
-    uint16 result = 0;
-    osal_pwrmgr_task_state(zclApp_TaskID, PWRMGR_HOLD);
-    if (sensorType == UNKNOWN) {
-        switch (currentSensorsReadingPhase++) {
-        case 0:
-            SenseAir_RequestMeasure();
-            break;
-
-        case 1:
-            SenseAir_Read(&result);
-            if (result != SENSEAIR_INVALID_RESPONSE) {
-                LREPMaster("Detected SENSEAIR\r\n");
-                sensorType = SENSEAIR;
-                zclApp_StopSensorDetection();
-                zclApp_InitSensors();
-            }
-            break;
-
-        case 2:
-            MHZ19_RequestMeasure();
-            break;
-        case 3:
-            MHZ19_Read(&result);
-            if (result != MHZ18_INVALID_RESPONSE) {
-                LREPMaster("Detected MHZ19\r\n");
-                sensorType = MHZ19;
-                zclApp_StopSensorDetection();
-                zclApp_InitSensors();
-            }
-            break;
-
-        default:
-            zclApp_StopSensorDetection();
-            currentSensorsReadingPhase = 0;
-
-            break;
-        }
-    }
-}
 static void zclApp_ReadSensors(void) {
-    if (zclApp_Config.LedFeedback) {
+  if (zclApp_Config.LedFeedback) {
         HalLedSet(HAL_LED_1, HAL_LED_MODE_BLINK);
     }
     static uint8 currentSensorsReadingPhase = 0;
+  
+    static uint8 temp_sensor_type = 0; // 0 bme280, 1 ds18b20, 2 not found
+    
     LREP("currentSensorsReadingPhase %d\r\n", currentSensorsReadingPhase);
-    /**
-     * FYI: split reading sensors into phases, so single call wouldn't block processor
-     * for extensive ammount of time
-     * */
+     // FYI: split reading sensors into phases, so single call wouldn't block processor
+     // for extensive ammount of time
+    uint16 ppm = 0;
     int16 temp;
-    uint16 co2;
     switch (currentSensorsReadingPhase++) {
     case 0:
-        osal_pwrmgr_task_state(zclApp_TaskID, PWRMGR_HOLD);
-        switch (sensorType) {
-        case SENSEAIR:
-            SenseAir_RequestMeasure();
-            break;
-        case MHZ19:
-            MHZ19_RequestMeasure();
-            break;
-
-        default:
-            LREPMaster("Sensor type UNKNOWN\r\n");
-            break;
-        }
+      osal_pwrmgr_task_state(zclApp_TaskID, PWRMGR_HOLD);
+      (*air_dev->RequestMeasure)();
+      break;
+    case 1:     
+      ppm = (*air_dev->Read)();
+      if (ppm == AIR_QUALITY_INVALID_RESPONSE)
+      {
+        air_dev =  (air_dev == &sense_air_dev) ? &MHZ19_dev : &sense_air_dev;
+        LREPMaster("Sensor type UNKNOWN continue detect\r\n");
+        current_co2_sensor_state = 0xff; //a part of algorithm avoiding exceptional io
+        osal_pwrmgr_task_state(zclApp_TaskID, PWRMGR_CONSERVE);
         break;
-    case 1:
-        switch (sensorType) {
-        case SENSEAIR:
-            SenseAir_Read(&co2);
-            zclApp_Sensors.CO2_PPM = co2;
-            zclApp_Sensors.CO2 = (double)co2 / 1000000.0;
-            break;
-        case MHZ19:
-            MHZ19_Read(&co2);
-            zclApp_Sensors.CO2_PPM = co2;
-            zclApp_Sensors.CO2 = (double)co2 / 1000000.0;
-            break;
-
-        default:
-            LREPMaster("Sensor type UNKNOWN\r\n");
-            break;
-        }
-        break;
+      }
+      current_co2_sensor_state = (current_co2_sensor_state == 0xff) ? 0: current_co2_sensor_state;
+      zclApp_Sensors.CO2_PPM = ppm;
+      zclApp_Sensors.CO2 = (double)ppm / 1000000.0;
+      bdb_RepChangedAttrValue(zclApp_FirstEP.EndPoint, ZCL_CO2, ATTRID_CO2_MEASURED_VALUE);
+      zclApp_SetupABC(false);
+      osal_pwrmgr_task_state(zclApp_TaskID, PWRMGR_CONSERVE);
+      break;
     case 2:
+      if (temp_sensor_type == 0)
+      {
+        temp_sensor_type = (zclApp_RequestBME280(&bme_dev) == 0) ? 0 : 1;
+        break;
+      }
+      currentSensorsReadingPhase++;
+      //missed break means: do not initiate new read iteration in case of missing ds18b20 sensor
+    case 3:
+      if (temp_sensor_type == 0)
+      {
+        zclApp_ReadBME280(&bme_dev);
+        break;
+      }
+      currentSensorsReadingPhase++;
+      //missed break means: do not initiate new read iteration in case of missing ds18b20 sensor
+    case 4:  
+      if (temp_sensor_type == 1) {
         temp = readTemperature();
         if (temp == 1) {
+            temp_sensor_type = 2;
             LREPMaster("ReadDS18B20 error\r\n");
         } else {
             zclApp_Sensors.Temperature = temp + zclApp_Config.TemperatureOffset;
             LREP("ReadDS18B20 t=%d offset=\r\n", zclApp_Sensors.Temperature, zclApp_Config.TemperatureOffset);
         }
         break;
-    case 3:
-        zclApp_RequestBME280(&bme_dev);
-        break;
-
-    case 4:
-        zclApp_ReadBME280(&bme_dev);
-        osal_pwrmgr_task_state(zclApp_TaskID, PWRMGR_CONSERVE);
-        break;
-
+      }//missed break means: do not initiate new read iteration in case of missing ds18b20 sensor
     default:
 
-        osal_stop_timerEx(zclApp_TaskID, APP_READ_SENSORS_EVT);
-        osal_clear_event(zclApp_TaskID, APP_READ_SENSORS_EVT);
-
+      osal_stop_timerEx(zclApp_TaskID, APP_READ_SENSORS_EVT);
+      osal_clear_event(zclApp_TaskID, APP_READ_SENSORS_EVT);
+      if (temp_sensor_type == 0) {
         bdb_RepChangedAttrValue(zclApp_FirstEP.EndPoint, TEMP, ATTRID_MS_TEMPERATURE_MEASURED_VALUE);
         bdb_RepChangedAttrValue(zclApp_FirstEP.EndPoint, PRESSURE, ATTRID_MS_PRESSURE_MEASUREMENT_MEASURED_VALUE);
-        bdb_RepChangedAttrValue(zclApp_FirstEP.EndPoint, HUMIDITY, ATTRID_MS_RELATIVE_HUMIDITY_MEASURED_VALUE);
-        bdb_RepChangedAttrValue(zclApp_FirstEP.EndPoint, ZCL_CO2, ATTRID_CO2_MEASURED_VALUE);
-        currentSensorsReadingPhase = 0;
-        zclApp_LedFeedback();
-        break;
+        bdb_RepChangedAttrValue(zclApp_FirstEP.EndPoint, HUMIDITY, ATTRID_MS_RELATIVE_HUMIDITY_MEASURED_VALUE);        
+      }
+        
+      if (temp_sensor_type == 1) {
+        bdb_RepChangedAttrValue(zclApp_FirstEP.EndPoint, TEMP, ATTRID_MS_TEMPERATURE_MEASURED_VALUE);
+      }     
+      currentSensorsReadingPhase = 0;
+      zclApp_LedFeedback();
+      break;
     }
 }
 
 static void zclApp_Report(void) {
-    if (sensorType == UNKNOWN) {
-        osal_start_reload_timer(zclApp_TaskID, APP_DETECT_SENSORS_EVT, 100);
-    } else {
-        osal_start_reload_timer(zclApp_TaskID, APP_READ_SENSORS_EVT, 500);
-    }
+     osal_start_reload_timer(zclApp_TaskID, APP_READ_SENSORS_EVT, 500);
 }
 
 static void zclApp_BasicResetCB(void) {
@@ -371,7 +312,9 @@ static void zclApp_BasicResetCB(void) {
 
 static ZStatus_t zclApp_ReadWriteAuthCB(afAddrType_t *srcAddr, zclAttrRec_t *pAttr, uint8 oper) {
     LREPMaster("AUTH CB called\r\n");
-    zclApp_InitSensors();
+    osal_pwrmgr_task_state(zclApp_TaskID, PWRMGR_HOLD);
+    zclApp_SetupABC(true);
+    osal_pwrmgr_task_state(zclApp_TaskID, PWRMGR_CONSERVE);
     osal_start_timerEx(zclApp_TaskID, APP_SAVE_ATTRS_EVT, 2000);
     return ZSuccess;
 }
@@ -394,7 +337,7 @@ static void zclApp_RestoreAttributesFromNV(void) {
     }
 }
 
-static void zclApp_RequestBME280(struct bme280_dev *dev) {
+static uint8 zclApp_RequestBME280(struct bme280_dev *dev) {
     int8_t rslt = bme280_init(dev);
     if (rslt == BME280_OK) {
         uint8_t settings_sel;
@@ -413,9 +356,12 @@ static void zclApp_RequestBME280(struct bme280_dev *dev) {
         rslt = bme280_set_sensor_mode(BME280_FORCED_MODE, dev);
     } else {
         LREP("ReadBME280 init error %d\r\n", rslt);
+        return 1;
     }
+    
+    return 0;
 }
-static void zclApp_ReadBME280(struct bme280_dev *dev) {
+static uint8 zclApp_ReadBME280(struct bme280_dev *dev) {
     struct bme280_data bme_results;
     int8_t rslt = bme280_get_sensor_data(BME280_ALL, &bme_results, dev);
     if (rslt == BME280_OK) {
@@ -426,7 +372,9 @@ static void zclApp_ReadBME280(struct bme280_dev *dev) {
         zclApp_Sensors.Temperature = (int16)bme_results.temperature + zclApp_Config.TemperatureOffset;
     } else {
         LREP("ReadBME280 bme280_get_sensor_data error %d\r\n", rslt);
+        return 1;
     }
+    return 0;
 }
 
 /****************************************************************************
