@@ -222,8 +222,7 @@ static void zclApp_ReadSensors(void) {
   if (zclApp_Config.LedFeedback) {
         HalLedSet(HAL_LED_1, HAL_LED_MODE_BLINK);
     }
-    static uint8 currentSensorsReadingPhase = 0;
-  
+    static uint8 currentSensorsReadingPhase = 0; 
     static uint8 temp_sensor_type = 0; // 0 bme280, 1 ds18b20, 2 not found
     
     LREP("currentSensorsReadingPhase %d\r\n", currentSensorsReadingPhase);
@@ -282,13 +281,12 @@ static void zclApp_ReadSensors(void) {
         break;
       }//missed break means: do not initiate new read iteration in case of missing ds18b20 sensor
     default:
-
       osal_stop_timerEx(zclApp_TaskID, APP_READ_SENSORS_EVT);
       osal_clear_event(zclApp_TaskID, APP_READ_SENSORS_EVT);
       if (temp_sensor_type == 0) {
         bdb_RepChangedAttrValue(zclApp_FirstEP.EndPoint, TEMP, ATTRID_MS_TEMPERATURE_MEASURED_VALUE);
         bdb_RepChangedAttrValue(zclApp_FirstEP.EndPoint, PRESSURE, ATTRID_MS_PRESSURE_MEASUREMENT_MEASURED_VALUE);
-        bdb_RepChangedAttrValue(zclApp_FirstEP.EndPoint, HUMIDITY, ATTRID_MS_RELATIVE_HUMIDITY_MEASURED_VALUE);        
+        bdb_RepChangedAttrValue(zclApp_FirstEP.EndPoint, HUMIDITY, ATTRID_MS_RELATIVE_HUMIDITY_MEASURED_VALUE);
       }
         
       if (temp_sensor_type == 1) {
@@ -366,9 +364,9 @@ static uint8 zclApp_ReadBME280(struct bme280_dev *dev) {
     int8_t rslt = bme280_get_sensor_data(BME280_ALL, &bme_results, dev);
     if (rslt == BME280_OK) {
         LREP("ReadBME280 t=%ld, p=%ld, h=%ld\r\n", bme_results.temperature, bme_results.pressure, bme_results.humidity);
-        zclApp_Sensors.BME280_Temperature_Sensor_MeasuredValue = (int16)bme_results.temperature + zclApp_Config.TemperatureOffset;
-        zclApp_Sensors.BME280_PressureSensor_MeasuredValue = bme_results.pressure / 100 + zclApp_Config.PressureOffset / 100;
         zclApp_Sensors.BME280_HumiditySensor_MeasuredValue = (uint16)(bme_results.humidity * 100 / 1024) + zclApp_Config.HumidityOffset;
+        zclApp_Sensors.BME280_PressureSensor_ScaledValue = (bme_results.pressure + zclApp_Config.PressureOffset) / 10; // FYI mmhg = bme_results.pressure/133.322
+        zclApp_Sensors.BME280_PressureSensor_MeasuredValue = zclApp_Sensors.BME280_PressureSensor_ScaledValue / 10; 
         zclApp_Sensors.Temperature = (int16)bme_results.temperature + zclApp_Config.TemperatureOffset;
     } else {
         LREP("ReadBME280 bme280_get_sensor_data error %d\r\n", rslt);
