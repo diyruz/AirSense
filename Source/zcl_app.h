@@ -14,13 +14,11 @@ extern "C" {
 /*********************************************************************
  * CONSTANTS
  */
-#define APP_REPORT_DELAY ((uint32)60 * (uint32)1000) // 1 minute
+#define APP_REPORT_DELAY ((uint32)30 * (uint32)1000) // 1 minute
 // Application Events
 #define APP_REPORT_EVT 0x0001
 #define APP_SAVE_ATTRS_EVT 0x0002
 #define APP_READ_SENSORS_EVT 0x0004
-#define APP_DETECT_SENSORS_EVT 0x0008
-
 /*********************************************************************
  * MACROS
  */
@@ -53,11 +51,7 @@ extern "C" {
 #define ATTRID_TemperatureOffset    0x0210
 #define ATTRID_PressureOffset       0x0210
 #define ATTRID_HumidityOffset       0x0210
-
-
-#define ATTRID_MS_PRESSURE_MEASUREMENT_MEASURED_VALUE_HPA               0x0200
-
-
+   
 #define ZCL_UINT8 ZCL_DATATYPE_UINT8
 #define ZCL_UINT16 ZCL_DATATYPE_UINT16
 #define ZCL_INT16 ZCL_DATATYPE_INT16
@@ -77,7 +71,6 @@ typedef struct {
     int16 TemperatureOffset;
     int32 PressureOffset;
     int16 HumidityOffset;
-
 } application_config_t;
 
 typedef struct {
@@ -85,8 +78,10 @@ typedef struct {
     int16 CO2_PPM;
     int16 Temperature;
     int16 BME280_Temperature_Sensor_MeasuredValue;
-    int16 BME280_PressureSensor_MeasuredValue;
     uint16 BME280_HumiditySensor_MeasuredValue;
+    int16 BME280_PressureSensor_MeasuredValue;
+    int16 BME280_PressureSensor_ScaledValue;
+    int8 BME280_PressureSensor_Scale;
 } sensors_state_t;
 
 /*********************************************************************
