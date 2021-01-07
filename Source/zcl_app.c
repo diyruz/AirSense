@@ -269,7 +269,7 @@ static void zclApp_ReadSensors(void) {
       currentSensorsReadingPhase++;
       //missed break means: do not initiate new read iteration in case of missing ds18b20 sensor
     case 4:  
-      if (temp_sensor_type == EBME280) {
+      if (temp_sensor_type == EDS18B20) {
         temp = readTemperature();
         if (temp == 1) {
             temp_sensor_type = ENOTFOUND;
