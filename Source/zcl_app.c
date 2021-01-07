@@ -209,12 +209,12 @@ static void zclApp_LedFeedback(void) {
     }
 }
 
-static uint8 current_co2_sensor_state = 0xff;
+static uint8 current_co2_sensor_state = ABC_NOT_AVALIABLE;
 static void zclApp_SetupABC(bool force) {
-    if ((current_co2_sensor_state!=0xFF) != zclApp_Config.EnableABC || force)
+    if ((current_co2_sensor_state != ABC_NOT_AVALIABLE) != zclApp_Config.EnableABC || force)
     {
       (*air_dev->SetABC)(zclApp_Config.EnableABC);
-      current_co2_sensor_state = zclApp_Config.EnableABC ? 1 : 0; // write 
+      current_co2_sensor_state = zclApp_Config.EnableABC ? ABC_ENABLED : ABC_DISABLED; // write 
     }    
 }
 
@@ -223,7 +223,7 @@ static void zclApp_ReadSensors(void) {
         HalLedSet(HAL_LED_1, HAL_LED_MODE_BLINK);
     }
     static uint8 currentSensorsReadingPhase = 0; 
-    static uint8 temp_sensor_type = 0; // 0 bme280, 1 ds18b20, 2 not found
+    static uint8 temp_sensor_type = EBME280; // 0 bme280, 1 ds18b20, 2 not found
     
     LREP("currentSensorsReadingPhase %d\r\n", currentSensorsReadingPhase);
      // FYI: split reading sensors into phases, so single call wouldn't block processor
@@ -241,7 +241,7 @@ static void zclApp_ReadSensors(void) {
       {
         air_dev =  (air_dev == &sense_air_dev) ? &MHZ19_dev : &sense_air_dev;
         LREPMaster("Sensor type UNKNOWN continue detect\r\n");
-        current_co2_sensor_state = 0xff; //a part of algorithm avoiding exceptional io
+        current_co2_sensor_state = ABC_NOT_AVALIABLE; //a part of algorithm avoiding exceptional io
         osal_pwrmgr_task_state(zclApp_TaskID, PWRMGR_CONSERVE);
         break;
       }
@@ -253,15 +253,15 @@ static void zclApp_ReadSensors(void) {
       osal_pwrmgr_task_state(zclApp_TaskID, PWRMGR_CONSERVE);
       break;
     case 2:
-      if (temp_sensor_type == 0)
+      if (temp_sensor_type == EBME280)
       {
-        temp_sensor_type = (zclApp_RequestBME280(&bme_dev) == 0) ? 0 : 1;
+        temp_sensor_type = (zclApp_RequestBME280(&bme_dev) == 0) ? EBME280 : EDS18B20;
         break;
       }
       currentSensorsReadingPhase++;
       //missed break means: do not initiate new read iteration in case of missing ds18b20 sensor
     case 3:
-      if (temp_sensor_type == 0)
+      if (temp_sensor_type == EBME280)
       {
         zclApp_ReadBME280(&bme_dev);
         break;
@@ -269,10 +269,10 @@ static void zclApp_ReadSensors(void) {
       currentSensorsReadingPhase++;
       //missed break means: do not initiate new read iteration in case of missing ds18b20 sensor
     case 4:  
-      if (temp_sensor_type == 1) {
+      if (temp_sensor_type == EBME280) {
         temp = readTemperature();
         if (temp == 1) {
-            temp_sensor_type = 2;
+            temp_sensor_type = ENOTFOUND;
             LREPMaster("ReadDS18B20 error\r\n");
         } else {
             zclApp_Sensors.Temperature = temp + zclApp_Config.TemperatureOffset;

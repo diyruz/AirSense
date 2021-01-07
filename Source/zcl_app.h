@@ -39,7 +39,18 @@ extern "C" {
 //Carbon Dioxide (CO2)
 #define ZCL_CO2     0x040d
 
+enum {
+  EBME280 = 0,
+  EDS18B20 = 1,
+  ENOTFOUND = 2
+};
 
+enum {  
+  ABC_DISABLED = 0,
+  ABC_ENABLED = 1,
+  ABC_NOT_AVALIABLE = 0xFF,
+};
+  
 // Carbon Dioxide (CO2)
 #define ATTRID_CO2_MEASURED_VALUE   0x0000
 #define ATTRID_CO2_TOLERANCE        0x0003
