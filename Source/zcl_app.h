@@ -14,7 +14,8 @@ extern "C" {
 /*********************************************************************
  * CONSTANTS
  */
-#define APP_REPORT_DELAY ((uint32)180 * (uint32)1000) // 3 minutes
+#define APP_REPORT_DELAY ((uint32)60 * (uint32)1000) // 1 minute
+
 // Application Events
 #define APP_REPORT_EVT 0x0001
 #define APP_SAVE_ATTRS_EVT 0x0002
