@@ -283,13 +283,13 @@ static void zclApp_ReadSensors(void) {
     default:
       osal_stop_timerEx(zclApp_TaskID, APP_READ_SENSORS_EVT);
       osal_clear_event(zclApp_TaskID, APP_READ_SENSORS_EVT);
-      if (temp_sensor_type == 0) {
+      if (temp_sensor_type == EBME280) {
         bdb_RepChangedAttrValue(zclApp_FirstEP.EndPoint, TEMP, ATTRID_MS_TEMPERATURE_MEASURED_VALUE);
         bdb_RepChangedAttrValue(zclApp_FirstEP.EndPoint, PRESSURE, ATTRID_MS_PRESSURE_MEASUREMENT_MEASURED_VALUE);
         bdb_RepChangedAttrValue(zclApp_FirstEP.EndPoint, HUMIDITY, ATTRID_MS_RELATIVE_HUMIDITY_MEASURED_VALUE);
       }
         
-      if (temp_sensor_type == 1) {
+      if (temp_sensor_type == EDS18B20) {
         bdb_RepChangedAttrValue(zclApp_FirstEP.EndPoint, TEMP, ATTRID_MS_TEMPERATURE_MEASURED_VALUE);
       }     
       currentSensorsReadingPhase = 0;
