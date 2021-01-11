@@ -77,11 +77,11 @@ sensors_state_t zclApp_Sensors = {
     .CO2 = 0.0,
     .CO2_PPM = 0,
     .Temperature = 0,
-    .BME280_Temperature_Sensor_MeasuredValue = 0,
     .BME280_PressureSensor_MeasuredValue = 0,
-    .BME280_HumiditySensor_MeasuredValue = 0
+    .BME280_HumiditySensor_MeasuredValue = 0,
+    .BME280_PressureSensor_ScaledValue   = 0,
+    .BME280_PressureSensor_Scale = -1
 };
-
 
 /*********************************************************************
  * ATTRIBUTE DEFINITIONS - Uses REAL cluster IDs
@@ -102,10 +102,12 @@ CONST zclAttrRec_t zclApp_AttrsFirstEP[] = {
     {TEMP, {ATTRID_MS_TEMPERATURE_MEASURED_VALUE, ZCL_INT16, RR, (void *)&zclApp_Sensors.Temperature}},
     {TEMP, {ATTRID_TemperatureOffset, ZCL_INT16, RW, (void *)&zclApp_Config.TemperatureOffset}},
 
-
     {PRESSURE, {ATTRID_MS_PRESSURE_MEASUREMENT_MEASURED_VALUE, ZCL_INT16, RR, (void *)&zclApp_Sensors.BME280_PressureSensor_MeasuredValue}},
+    {PRESSURE, {ATTRID_MS_PRESSURE_MEASUREMENT_SCALED_VALUE, ZCL_INT16, RR, (void *)&zclApp_Sensors.BME280_PressureSensor_ScaledValue}},
+    {PRESSURE, {ATTRID_MS_PRESSURE_MEASUREMENT_SCALE, ZCL_INT8, RR, (void *)&zclApp_Sensors.BME280_PressureSensor_Scale}},
     {PRESSURE, {ATTRID_PressureOffset, ZCL_INT32, RW, (void *)&zclApp_Config.PressureOffset}},
 
+    
     {HUMIDITY, {ATTRID_MS_RELATIVE_HUMIDITY_MEASURED_VALUE, ZCL_UINT16, RR, (void *)&zclApp_Sensors.BME280_HumiditySensor_MeasuredValue}},
     {HUMIDITY, {ATTRID_HumidityOffset, ZCL_INT16, RW, (void *)&zclApp_Config.HumidityOffset}},
 
@@ -123,7 +125,7 @@ const cId_t zclApp_InClusterList[] = {ZCL_CLUSTER_ID_GEN_BASIC};
 
 #define APP_MAX_INCLUSTERS (sizeof(zclApp_InClusterList) / sizeof(zclApp_InClusterList[0]))
 
-const cId_t zclApp_OutClusterList[] = {TEMP,  HUMIDITY, PRESSURE, ZCL_CO2};
+const cId_t zclApp_OutClusterList[] = {TEMP, HUMIDITY, PRESSURE, ZCL_CO2};
 
 
 #define APP_MAX_OUT_CLUSTERS (sizeof(zclApp_OutClusterList) / sizeof(zclApp_OutClusterList[0]))
