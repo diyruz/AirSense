@@ -215,16 +215,17 @@ static void zclApp_SetupABC(bool force) {
     {
       (*air_dev->SetABC)(zclApp_Config.EnableABC);
       current_co2_sensor_state = zclApp_Config.EnableABC ? ABC_ENABLED : ABC_DISABLED; // write 
-    }    
+    }
 }
 
 static void zclApp_ReadSensors(void) {
   if (zclApp_Config.LedFeedback) {
         HalLedSet(HAL_LED_1, HAL_LED_MODE_BLINK);
     }
-    static uint8 currentSensorsReadingPhase = 0; 
-    static uint8 temp_sensor_type = EBME280; // 0 bme280, 1 ds18b20, 2 not found
-    
+    static uint8 currentSensorsReadingPhase = 0;
+    static uint8 temp_sensor_type = EBME280;
+    bool sensor_state_not_avaliable = false;
+
     LREP("currentSensorsReadingPhase %d\r\n", currentSensorsReadingPhase);
      // FYI: split reading sensors into phases, so single call wouldn't block processor
      // for extensive ammount of time
@@ -235,7 +236,7 @@ static void zclApp_ReadSensors(void) {
       osal_pwrmgr_task_state(zclApp_TaskID, PWRMGR_HOLD);
       (*air_dev->RequestMeasure)();
       break;
-    case 1:     
+    case 1:
       ppm = (*air_dev->Read)();
       if (ppm == AIR_QUALITY_INVALID_RESPONSE)
       {
@@ -245,11 +246,12 @@ static void zclApp_ReadSensors(void) {
         osal_pwrmgr_task_state(zclApp_TaskID, PWRMGR_CONSERVE);
         break;
       }
-      current_co2_sensor_state = (current_co2_sensor_state == 0xff) ? 0: current_co2_sensor_state;
+      sensor_state_not_avaliable = current_co2_sensor_state == ABC_NOT_AVALIABLE;
+      current_co2_sensor_state = sensor_state_not_avaliable ? ABC_DISABLED: current_co2_sensor_state;
       zclApp_Sensors.CO2_PPM = ppm;
       zclApp_Sensors.CO2 = (double)ppm / 1000000.0;
       bdb_RepChangedAttrValue(zclApp_FirstEP.EndPoint, ZCL_CO2, ATTRID_CO2_MEASURED_VALUE);
-      zclApp_SetupABC(false);
+      zclApp_SetupABC(sensor_state_not_avaliable);
       osal_pwrmgr_task_state(zclApp_TaskID, PWRMGR_CONSERVE);
       break;
     case 2:
