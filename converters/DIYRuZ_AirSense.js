@@ -15,44 +15,7 @@ const bind = async (endpoint, target, clusters) => {
 
 const ACCESS_STATE = 0b001, ACCESS_WRITE = 0b010, ACCESS_READ = 0b100;
 
-const hass = {
-    co2: {
-        type: 'sensor',
-        object_id: 'co2',
-        discovery_payload: {
-            unit_of_measurement: 'ppm',
-            icon: 'mdi:molecule-co2',
-            value_template: '{{ value_json.co2 }}',
-        },
-    },
-    temperature: {
-        type: 'sensor',
-        object_id: 'temperature',
-        discovery_payload: {
-            unit_of_measurement: '°C',
-            device_class: 'temperature',
-            value_template: '{{ value_json.temperature }}',
-        },
-    },
-    humidity: {
-        type: 'sensor',
-        object_id: 'humidity',
-        discovery_payload: {
-            unit_of_measurement: '%',
-            device_class: 'humidity',
-            value_template: '{{ value_json.humidity }}',
-        },
-    },
-    presure: {
-        type: 'sensor',
-        object_id: 'pressure',
-        discovery_payload: {
-            unit_of_measurement: 'hPa',
-            device_class: 'pressure',
-            value_template: '{{ value_json.pressure }}',
-        },
-    }
-};
+
 const deviceOptions = [{
         cluster: 'msCO2',
         attrId: 0x0203,
@@ -171,7 +134,6 @@ const device = {
     vendor: 'DIYRuZ',
     description: '[Air quality sensor, external converter](http://modkam.ru/?p=xxxx)',
     supports: '',
-    homeassistant: [hass.temperature, hass.presure, hass.humidity, hass.co2],
     fromZigbee: [
         fromZigbeeConverters.temperature,
         fromZigbeeConverters.humidity,
