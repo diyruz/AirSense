@@ -44,7 +44,7 @@ const uint16 zclApp_clusterRevision_all = 0x0002;
 // Basic Cluster
 const uint8 zclApp_HWRevision = APP_HWVERSION;
 const uint8 zclApp_ZCLVersion = APP_ZCLVERSION;
-const uint8 zclApp_ApplicationVersion = 3;
+const uint8 zclApp_ApplicationVersion = 4;
 const uint8 zclApp_StackVersion = 4;
 
 //{lenght, 'd', 'a', 't', 'a'}
@@ -78,9 +78,7 @@ sensors_state_t zclApp_Sensors = {
     .CO2_PPM = 0,
     .Temperature = 0,
     .BME280_PressureSensor_MeasuredValue = 0,
-    .BME280_HumiditySensor_MeasuredValue = 0,
-    .BME280_PressureSensor_ScaledValue   = 0,
-    .BME280_PressureSensor_Scale = -1
+    .BME280_HumiditySensor_MeasuredValue = 0
 };
 
 /*********************************************************************
@@ -103,8 +101,6 @@ CONST zclAttrRec_t zclApp_AttrsFirstEP[] = {
     {TEMP, {ATTRID_TemperatureOffset, ZCL_INT16, RW, (void *)&zclApp_Config.TemperatureOffset}},
 
     {PRESSURE, {ATTRID_MS_PRESSURE_MEASUREMENT_MEASURED_VALUE, ZCL_INT16, RR, (void *)&zclApp_Sensors.BME280_PressureSensor_MeasuredValue}},
-    {PRESSURE, {ATTRID_MS_PRESSURE_MEASUREMENT_SCALED_VALUE, ZCL_INT16, RR, (void *)&zclApp_Sensors.BME280_PressureSensor_ScaledValue}},
-    {PRESSURE, {ATTRID_MS_PRESSURE_MEASUREMENT_SCALE, ZCL_INT8, RR, (void *)&zclApp_Sensors.BME280_PressureSensor_Scale}},
     {PRESSURE, {ATTRID_PressureOffset, ZCL_INT32, RW, (void *)&zclApp_Config.PressureOffset}},
 
 
