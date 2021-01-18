@@ -11,3 +11,15 @@
 Use [external converters](https://www.zigbee2mqtt.io/information/configuration.html#external-converters-configuration) feature
 
 Converter file located [here](./converters/DIYRuZ_AirSense.js)
+
+# User interface
+
+LED1 blinks when accessing the CO2 sensor.
+
+LED2 blinks if the CO2 value is higher than the first set point, while LED3 is off.
+
+LED3 blinks if the CO2 value is higher than the second set point, while LED2 is on.
+
+SW2 reset and join E18
+
+SW1 CO2 calibration
