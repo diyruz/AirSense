@@ -10,23 +10,27 @@ Today there are several options available for CO2 measurement, the most interest
 ### Diagram
 ![](https://i2.wp.com/modkam.ru/wp-content/uploads/2020/09/Schematic_CO2_SenseAir_S8.png?w=1169&ssl=1)  
 
-The Zigbee part is implemented on the E18-MS1PA1-PCB module, besides it, the board contains the SenseAir S8 CO2 sensor itself
-![](https://i2.wp.com/modkam.ru/wp-content/uploads/2020/09/CO2_SenseAir_S8_2.png?zoom=2&resize=640%2C411) ![](https://i0.wp.com/modkam.ru/wp-content/uploads/2020/09/CO2_SenseAir_S8_1.png?w=801&ssl=1) and two variants of temperature sensors, this is the DS18B20 and the more universal BME280 sensor, which allows you to measure temperature, humidity and atmospheric pressure.
+The Zigbee part is implemented on the E18-MS1PA1-PCB module, besides it, the board contains the SenseAir S8 CO2 sensor itself  
+![](https://i2.wp.com/modkam.ru/wp-content/uploads/2020/09/CO2_SenseAir_S8_2.png?zoom=2&resize=640%2C411)   
+![](https://i0.wp.com/modkam.ru/wp-content/uploads/2020/09/CO2_SenseAir_S8_1.png?w=801&ssl=1)   
+and two variants of temperature sensors, this is the DS18B20 and the more universal BME280 sensor, which allows you to measure temperature, humidity and atmospheric pressure.
 
 ### PCB
-The board is designed in the popular "usb stick" form factor, you can unsolder both micro USB and USB-A connectors ![](https://i0.wp.com/modkam.ru/wp-content/uploads/2020/09/CO2_SenseAir_S8_6.png?zoom=2&resize=571%2C268) ![](https://i0.wp.com/modkam.ru/wp-content/uploads/2020/09/CO2_SenseAir_S8_5.png?zoom=2&resize=594%2C258)
+The board is designed in the popular "usb stick" form factor, you can unsolder both micro USB and USB-A connectors   
+![](https://i0.wp.com/modkam.ru/wp-content/uploads/2020/09/CO2_SenseAir_S8_6.png?zoom=2&resize=571%2C268)
+![](https://i0.wp.com/modkam.ru/wp-content/uploads/2020/09/CO2_SenseAir_S8_5.png?zoom=2&resize=594%2C258)
 
 
 The assembly of the device should not cause difficulties even for people with initial soldering skills, all elements are large enough, with the exception of the BME280.
 
-When assembled, the device looks like this, please note that a gap must be left between the SenseAir S8 and the board.
+When assembled, the device looks like this, please note that a gap must be left between the SenseAir S8 and the board.  
 ![](https://i1.wp.com/modkam.ru/wp-content/uploads/2020/09/2020-09-25_14-17-18.png)
 
 Anonymass wrote the firmware for this device, it is open source.  
 
 ### Support
-The sensor is supported in the zigbee2mqtt via interval and external converter. It looks like this
-![](https://i1.wp.com/modkam.ru/wp-content/uploads/2020/09/CO2_SenseAir_S8_10.png)
+The sensor is supported in the zigbee2mqtt via interval and external converter. It looks like this  
+![](https://i1.wp.com/modkam.ru/wp-content/uploads/2020/09/CO2_SenseAir_S8_10.png)  
 ![](https://i0.wp.com/modkam.ru/wp-content/uploads/2020/09/CO2_SenseAir_S8_11.png)
 
 also implemented support in SLS Gateway
@@ -34,10 +38,10 @@ also implemented support in SLS Gateway
 
 According to the test results, the high sensitivity of SenseAir S8 was found, the sensor quickly responds to changes in the CO2 level.
 
-Jager's daily schedule.
+Jager's daily schedule.  
 ![](https://i0.wp.com/modkam.ru/wp-content/uploads/2020/09/CO2_SenseAir_S8_8.png)
 
-Anonymass' daily schedule.
+Anonymass' daily schedule.  
 ![](https://i1.wp.com/modkam.ru/wp-content/uploads/2020/09/CO2_SenseAir_S8_12.png)
 
 ### Other info
