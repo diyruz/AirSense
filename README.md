@@ -1,7 +1,5 @@
 # Air quality sensor
 
-# TEST MESSAGE
-
 [Original by Jager](https://modkam.ru/?p=1715)  
 
 ![](https://i1.wp.com/modkam.ru/wp-content/uploads/2020/09/CO2_SenseAir_S8_9.png)  
