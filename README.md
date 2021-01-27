@@ -2,7 +2,7 @@
 
 [Original by Jager](https://modkam.ru/?p=1715)  
 
-![](https://i1.wp.com/modkam.ru/wp-content/uploads/2020/09/CO2_SenseAir_S8_9.png)
+![](https://i1.wp.com/modkam.ru/wp-content/uploads/2020/09/CO2_SenseAir_S8_9.png)  
 Carbon dioxide has a very negative effect on the human body and is a carcinogen. Being in a room with a high concentration of CO2 can cause weakness, drowsiness, headaches, and problems concentrating. In this regard, it is necessary to monitor the level of CO2 and take measures to reduce it.
 
 Today there are several options available for CO2 measurement, the most interesting being the SenseAir S8. His readings will be displayed on the Zigbee network.
