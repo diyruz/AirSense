@@ -239,7 +239,7 @@ extern void MAC_RfFrontendSetup(void);
   P1DIR |= BV(0) | BV(1);                                        \
                                                                  \
   /* Set PA/LNA HGM control P0_7 */                              \
-  /*P0DIR |= BV(7);                                              \
+  P0DIR |= BV(7);                                                \
                                                                  \
                                                                  \
   /* setup RF frontend if necessary */                           \

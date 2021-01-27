@@ -22,6 +22,14 @@
                 <project>GenericApp</project>
                 <configuration>DIYRuZ_AirSense_EndDevice_CC2592</configuration>
             </member>
+            <member>
+                <project>GenericApp</project>
+                <configuration>DIYRuZ_AirSense_EndDevice_CC2591</configuration>
+            </member>
+            <member>
+                <project>GenericApp</project>
+                <configuration>DIYRuZ_AirSense_Router_CC2591</configuration>
+            </member>
         </batchDefinition>
     </batchBuild>
 </workspace>
