@@ -1,5 +1,3 @@
-# Air quality sensor
-
 ![](/images/CO2_SenseAir_S8.png)  
 Carbon dioxide has a very negative effect on the human body and is a carcinogen. Being in a room with a high concentration of CO2 can cause weakness, drowsiness, headaches, and problems concentrating. In this regard, it is necessary to monitor the level of CO2 and take measures to reduce it.
 
@@ -63,5 +61,7 @@ Anonymass' daily schedule.
 ### Files to reproduce
 * [Gerbers and BOM](https://github.com/diyruz/AirSense/tree/master/hardware)
 * [Firmware](https://github.com/diyruz/AirSense/releases)
+https://www.thingiverse.com/thing:4739711
+* [Housing](https://www.thingiverse.com/thing:4739711) by [ArtBrayko](https://www.thingiverse.com/ArtBrayko)  
 
 [Original post by Jager](https://modkam.ru/?p=1715)  
