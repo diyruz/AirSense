@@ -1,46 +1,46 @@
 # Air quality sensor
 
-![](./images/CO2_SenseAir_S8.png)  
+![](/images/CO2_SenseAir_S8.png)  
 Carbon dioxide has a very negative effect on the human body and is a carcinogen. Being in a room with a high concentration of CO2 can cause weakness, drowsiness, headaches, and problems concentrating. In this regard, it is necessary to monitor the level of CO2 and take measures to reduce it.
 
 Today there are several options available for CO2 measurement, the most interesting being the SenseAir S8. His readings will be displayed on the Zigbee network.
 
 ### Diagram
-![](./images/Schematic_CO2_SenseAir_S8.png)  
+![](/images/Schematic_CO2_SenseAir_S8.png)  
 
 The Zigbee part is implemented on the E18-MS1PA1-PCB module, besides it, the board contains the SenseAir S8 CO2 sensor itself  
-![](./images/CO2_SenseAir_S8_2.png)   
-![](./images/CO2_SenseAir_S8_1.png)   
+![](/images/CO2_SenseAir_S8_2.png)   
+![](/images/CO2_SenseAir_S8_1.png)   
 and two variants of temperature sensors, this is the DS18B20 and the more universal BME280 sensor, which allows you to measure temperature, humidity and atmospheric pressure.
 
 ### PCB
 The board is designed in the popular "usb stick" form factor, you can unsolder both micro USB and USB-A connectors   
-![](./images/CO2_SenseAir_S8_6.png)
-![](./images/CO2_SenseAir_S8_5.png)
+![](/images/CO2_SenseAir_S8_6.png)
+![](/images/CO2_SenseAir_S8_5.png)
 
 
 The assembly of the device should not cause difficulties even for people with initial soldering skills, all elements are large enough, with the exception of the BME280.
 
 When assembled, the device looks like this, please note that a gap must be left between the SenseAir S8 and the board.  
-![](./images/2020-09-25_14-17-18.png)
+![](/images/2020-09-25_14-17-18.png)
 
 Anonymass wrote the firmware for this device, it is open source.  
 
 ### Support
 The sensor is supported in the zigbee2mqtt via interval and external converter. It looks like this  
-![](./images/CO2_SenseAir_S8_10.png)  
-![](./images/CO2_SenseAir_S8_11.png)
+![](/images/CO2_SenseAir_S8_10.png)  
+![](/images/CO2_SenseAir_S8_11.png)
 
 also implemented support in SLS Gateway
-![](./images/CO2_SenseAir_S8_15.png)  
+![](/images/CO2_SenseAir_S8_15.png)  
 
 According to the test results, the high sensitivity of SenseAir S8 was found, the sensor quickly responds to changes in the CO2 level.
 
 Jager's daily schedule.  
-![](./images/CO2_SenseAir_S8_8.png)
+![](/images/CO2_SenseAir_S8_8.png)
 
 Anonymass' daily schedule.  
-![](./images/CO2_SenseAir_S8_12.png)
+![](/images/CO2_SenseAir_S8_12.png)
 
 ### Other info
 * The MHZ19B sensor (and clones) also can be installed on the board.
