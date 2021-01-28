@@ -59,8 +59,8 @@ Anonymass' daily schedule.
 * SW1 CO2 Calibration
 
 ### Files to reproduce
-* [Gerbers and BOM](https://github.com/diyruz/AirSense/tree/master/hardware)
-* [Firmware](https://github.com/diyruz/AirSense/releases)
+* [Gerbers and BOM](https://github.com/diyruz/AirSense/tree/master/hardware) by [Jager](https://t.me/Jager_f)  
+* [Firmware](https://github.com/diyruz/AirSense/releases) by [@anonymass](https://t.me/anonymass)  
 * [Housing](https://www.thingiverse.com/thing:4739711) by [ArtBrayko](https://www.thingiverse.com/ArtBrayko)  
 
 [Original post by Jager](https://modkam.ru/?p=1715)  
