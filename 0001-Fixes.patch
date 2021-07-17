@@ -27,7 +27,6 @@ index 7a601f2..42c610d 100644
    {
 +    uint8 *pAttrData = NULL;
 +    uint8 *pAttrDataTemp = NULL;
-+    
      dstAddr.addrMode = (afAddrMode_t)AddrNotPresent;
      dstAddr.addr.shortAddr = 0;
      dstAddr.endPoint = clusterEndpointItem->endpoint;
@@ -50,7 +49,7 @@ index 7a601f2..42c610d 100644
          {
 -          pReportCmd->attrList[i].attrID = attrListItem->data->attrID;   
            zclAttribute_t attrRec;
-+          pReportCmd->attrList[i].attrID = attrListItem->data->attrID;   
++          pReportCmd->attrList[i].attrID = attrListItem->data->attrID;
            uint8 attrRes = bdb_RepFindAttrEntry( clusterEndpointItem->endpoint, clusterEndpointItem->cluster, attrListItem->data->attrID, &attrRec );
            if( attrRes == BDBREPORTING_TRUE )
            {
@@ -59,8 +58,7 @@ index 7a601f2..42c610d 100644
 +            pReportCmd->attrList[i].dataType = attrRec.dataType;
 +            pReportCmd->attrList[i].attrData = pAttrDataTemp;
 +            // Copy data to current attribute data pointer
-+            pAttrDataTemp = osal_memcpy(pAttrDataTemp, attrRec.dataPtr, BDBREPORTING_MAX_ANALOG_ATTR_SIZE);
-+                      
++            pAttrDataTemp = osal_memcpy(pAttrDataTemp, attrRec.dataPtr, BDBREPORTING_MAX_ANALOG_ATTR_SIZE);     
              //Update last value reported
              if( zclAnalogDataType( attrRec.dataType ) )
              { 
