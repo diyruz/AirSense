@@ -11,15 +11,15 @@ Follow this article https://zigdevwiki.github.io/Begin/IAR_install/
 The Zigbee part is implemented on the E18-MS1PA1-PCB module, besides it, the board contains the SenseAir S8 CO2 sensor itself  
 ![](/images/CO2_SenseAir_S8_2.png)   
 ![](/images/CO2_SenseAir_S8_1.png)   
-and two variants of temperature sensors, this is the DS18B20 and the more universal BME280 sensor, which allows you to measure temperature, humidity and atmospheric pressure.
+and two variants of temperature sensors is the DS18B20 and the more universal BME280 sensor, which allows you to measure temperature, humidity and atmospheric pressure.
 
 ### PCB
-The board is designed in the popular "usb stick" form factor, you can unsolder both micro USB and USB-A connectors   
+The board is designed in the popular "USB stick" form factor, you can unsolder both micro USB and USB-A connectors   
 ![](/images/CO2_SenseAir_S8_6.png)
 ![](/images/CO2_SenseAir_S8_5.png)
 
 
-The assembly of the device should not cause difficulties even for people with initial soldering skills, all elements are large enough, with the exception of the BME280.
+The assembly of the device should not cause difficulties even for people with initial soldering skills, all elements are large enough, except for the BME280.
 
 When assembled, the device looks like this, please note that a gap must be left between the SenseAir S8 and the board.  
 ![](/images/2020-09-25_14-17-18.png)
@@ -48,7 +48,7 @@ Anonymass' daily schedule.
 
 ### How to join
  * Reset to FN rebooting device 5 times with interval less than 10 seconds, led will start flashing during reset  
- * Reset to FN by pressing and holding button(1) 5 seconds
+ * Reset to FN by pressing and holding the button (1) 5 seconds
 
 ### User interface
 #### LEDs
